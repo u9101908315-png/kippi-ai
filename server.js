@@ -1,13 +1,9 @@
-import express from "express";
-import OpenAI from "openai";
-import path from "path";
-import { fileURLToPath } from "url";
+const express = require("express");
+const OpenAI = require("openai");
+const path = require("path");
 
 const app = express();
 const port = process.env.PORT || 3000;
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 app.use(express.json({ limit: "1mb" }));
 app.use(express.static(__dirname));
@@ -67,6 +63,7 @@ Nutzer sagt:
 "${userText}"
 
 Antworte als Kippi.
+
 Gib außerdem am Ende ein JSON-Objekt zurück, aber nur nach dem Marker ###STRUCTURED_DATA###.
 
 Das JSON soll ungefähr so aussehen:
