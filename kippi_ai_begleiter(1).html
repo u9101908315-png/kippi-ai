@@ -1,0 +1,1931 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kippi – damit es nicht kippt</title>
+  <style>
+    :root {
+      --bg: #f7f3ec;
+      --card: #fffaf3;
+      --ink: #25221e;
+      --muted: #71685f;
+      --green: #5b8d5a;
+      --pink: #e7a3b6;
+      --line: #e6d8c7;
+      --shadow: 0 14px 35px rgba(40, 32, 22, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #fff8ed 0%, var(--bg) 55%, #efe3d2 100%);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+    .app {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      padding: 20px;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(2rem, 8vw, 4.2rem);
+      letter-spacing: -0.05em;
+    }
+    .brand p { margin: 0; color: var(--muted); font-size: 1rem; }
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(255,255,255,0.55);
+      color: var(--muted);
+      font-size: .9rem;
+    }
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+    @media (min-width: 780px) {
+      .hero { grid-template-columns: 0.95fr 1.25fr; align-items: stretch; }
+    }
+    .card {
+      background: rgba(255, 250, 243, 0.86);
+      border: 1px solid rgba(230, 216, 199, 0.9);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      backdrop-filter: blur(8px);
+    }
+    .kippi-card {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 360px;
+    }
+    .kippi {
+      width: 220px;
+      height: 220px;
+      margin: 0 auto 10px;
+      position: relative;
+      animation: wobble 4s ease-in-out infinite;
+      transform-origin: 50% 85%;
+    }
+    @keyframes wobble {
+      0%, 100% { transform: rotate(-2deg) translateY(0); }
+      45% { transform: rotate(2.4deg) translateY(-4px); }
+      70% { transform: rotate(-1deg) translateY(1px); }
+    }
+    .body {
+      position: absolute;
+      left: 30px; top: 18px;
+      width: 160px; height: 180px;
+      background: linear-gradient(145deg, #73a86f, #4f7f50);
+      border-radius: 52% 48% 46% 54% / 56% 55% 45% 44%;
+      box-shadow: inset -16px -20px 35px rgba(0,0,0,.12), inset 12px 16px 30px rgba(255,255,255,.22), 0 18px 35px rgba(80, 80, 40, .18);
+      border: 4px solid #2f5a36;
+    }
+    .face {
+      position: absolute;
+      left: 54px; top: 67px;
+      width: 112px; height: 86px;
+      background: #fff1ea;
+      border-radius: 50% 50% 45% 45%;
+      border: 3px solid rgba(47, 42, 36, .9);
+    }
+    .eye { position: absolute; top: 28px; width: 13px; height: 18px; border-radius: 50%; background: #231f20; }
+    .eye.left { left: 29px; }
+    .eye.right { right: 29px; }
+    .cheek { position: absolute; top: 48px; width: 16px; height: 9px; border-radius: 50%; background: var(--pink); opacity: .85; }
+    .cheek.left { left: 17px; }
+    .cheek.right { right: 17px; }
+    .mouth {
+      position: absolute;
+      left: 43px; top: 52px;
+      width: 27px; height: 12px;
+      border-bottom: 3px solid #231f20;
+      border-radius: 0 0 100px 100px;
+      transition: all .18s ease;
+    }
+    .kippi.speaking .mouth {
+      left: 46px;
+      top: 55px;
+      width: 20px;
+      height: 14px;
+      border: 3px solid #231f20;
+      border-radius: 50%;
+      background: #6d3a3a;
+    }
+    .leaf {
+      position: absolute;
+      top: 6px; left: 100px;
+      width: 34px; height: 48px;
+      background: #e5a0b5;
+      border-radius: 100% 0 100% 0;
+      transform: rotate(22deg);
+      border: 3px solid #2f5a36;
+    }
+    .shadow {
+      width: 150px; height: 20px;
+      background: rgba(50, 40, 30, .16);
+      border-radius: 50%;
+      margin: 0 auto;
+      filter: blur(1px);
+    }
+    .speech {
+      margin: 12px auto 0;
+      max-width: 420px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 14px 16px;
+      color: var(--ink);
+      line-height: 1.42;
+    }
+    button, select, input, textarea {
+      font: inherit;
+    }
+    .actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    @media (min-width: 560px) { .actions { grid-template-columns: repeat(3, 1fr); } }
+    button {
+      border: 0;
+      border-radius: 16px;
+      padding: 13px 16px;
+      background: var(--green);
+      color: white;
+      cursor: pointer;
+      font-weight: 700;
+      box-shadow: 0 8px 20px rgba(55, 94, 55, .18);
+    }
+    button.secondary { background: #3f3a35; }
+    button.soft { background: #fff; color: var(--ink); border: 1px solid var(--line); box-shadow: none; }
+    button.warn { background: #a25656; }
+    button:hover { filter: brightness(.98); transform: translateY(-1px); }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .form-grid { display: grid; gap: 14px; }
+    label { display: grid; gap: 6px; font-weight: 700; }
+    .hint { font-weight: 400; color: var(--muted); font-size: .92rem; }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      color: var(--ink);
+      padding: 12px 13px;
+      outline: none;
+    }
+    textarea { min-height: 84px; resize: vertical; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      border: 1px solid var(--line);
+      background: white;
+      color: var(--ink);
+      padding: 9px 11px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: none;
+    }
+    .chip.selected { background: #e9f1e6; border-color: #7ea277; }
+    .section-title { margin: 0 0 12px; font-size: 1.5rem; letter-spacing: -0.03em; }
+    .diary { display: grid; gap: 10px; margin-top: 14px; }
+    .entry {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 13px 14px;
+    }
+    .entry-top { display:flex; justify-content:space-between; gap:10px; color: var(--muted); font-size: .9rem; margin-bottom: 5px; }
+    .entry strong { color: var(--ink); }
+    .insights { display: grid; gap: 10px; margin-top: 14px; }
+    .insight {
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 12px 13px;
+      color: var(--ink);
+    }
+    .voice-panel {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      text-align: left;
+      background: rgba(255,255,255,.55);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+    }
+    .voice-panel label { font-size: .9rem; }
+    .range-row { display: grid; grid-template-columns: 74px 1fr; gap: 10px; align-items: center; color: var(--muted); font-size: .88rem; }
+    input[type=range] { padding: 0; accent-color: var(--green); }
+    .analysis-panel { margin-top: 18px; display: grid; gap: 12px; }
+    .metric-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    @media (min-width: 760px) { .metric-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+    .metric {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+    }
+    .metric .number { font-size: 1.55rem; font-weight: 850; letter-spacing: -0.04em; }
+    .metric .label { color: var(--muted); font-size: .86rem; line-height: 1.25; }
+    .bar-row { display: grid; grid-template-columns: 110px 1fr 42px; gap: 8px; align-items: center; font-size: .92rem; }
+    .bar-shell { height: 10px; background: #f0e4d6; border-radius: 999px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--green); border-radius: 999px; }
+    .tagline { color: var(--muted); font-size: .92rem; line-height: 1.42; margin: 0 0 10px; }
+    .score-grid { display: grid; gap: 10px; background: rgba(255,255,255,.62); border: 1px solid var(--line); border-radius: 18px; padding: 12px; }
+    .score-grid h3 { margin: 0 0 2px; font-size: 1.05rem; }
+    .score-row { display: grid; grid-template-columns: 120px 1fr 42px; gap: 10px; align-items: center; font-weight: 650; font-size: .92rem; }
+    .score-row output { text-align: right; color: var(--green); font-weight: 850; }
+    .score-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); }
+    .score-table th, .score-table td { padding: 9px 10px; border-bottom: 1px solid var(--line); text-align: left; font-size: .92rem; }
+    .score-table tr:last-child td { border-bottom: 0; }
+    .score-table th { background: #f3eadf; color: var(--muted); font-weight: 800; }
+    .mini-note { color: var(--muted); font-size: .86rem; line-height: 1.35; }
+    .chart-card { background:#fff; border:1px solid var(--line); border-radius:18px; padding:14px; overflow:hidden; }
+    .chart-head { display:flex; justify-content:space-between; gap:12px; align-items:baseline; margin-bottom:8px; }
+    .chart-head strong { font-size:1rem; }
+    .chart-head span { color:var(--muted); font-size:.84rem; }
+    .line-chart { width:100%; height:230px; display:block; }
+    .chart-axis { stroke:#eadfce; stroke-width:1; }
+    .chart-line { fill:none; stroke:var(--green); stroke-width:4; stroke-linecap:round; stroke-linejoin:round; }
+    .chart-line.softline { stroke:#d891a6; stroke-width:3; }
+    .chart-line.clarity { stroke:#3f3a35; stroke-width:3; }
+    .chart-line.follow { stroke:#8b6f4e; stroke-width:3; }
+    .chart-dot { fill:#fff; stroke:var(--green); stroke-width:3; }
+    .chart-label { fill:#71685f; font-size:11px; }
+    .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; color:var(--muted); font-size:.84rem; }
+    .legend-item { display:inline-flex; gap:6px; align-items:center; }
+    .legend-swatch { width:16px; height:4px; border-radius:999px; background:var(--green); }
+    .legend-swatch.pink { background:#d891a6; }
+    .legend-swatch.dark { background:#3f3a35; }
+    .legend-swatch.brown { background:#8b6f4e; }
+    .comparison-grid { display:grid; gap:12px; }
+    .quiet-box { background:#fff; border:1px solid var(--line); border-radius:18px; padding:12px; }
+    .footer { margin: 24px 0 6px; color: var(--muted); font-size: .88rem; text-align: center; }
+
+    .guided-intro {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+    .guided-intro h3 { margin: 0 0 6px; font-size: 1.35rem; letter-spacing: -0.03em; }
+    .guided-controls { display: grid; gap: 10px; margin-top: 12px; }
+    @media (min-width: 620px) { .guided-controls { grid-template-columns: 1fr 1fr; align-items: end; } }
+    .guided-stage { display: grid; gap: 14px; }
+    .guided-progress { height: 10px; background: #f0e4d6; border-radius: 999px; overflow: hidden; }
+    .guided-progress > div { height: 100%; width: 0%; background: var(--green); border-radius: 999px; transition: width .25s ease; }
+    .guided-question {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+    }
+    .guided-question h2 { margin: 0 0 8px; font-size: 1.65rem; letter-spacing: -0.04em; }
+    .guided-kippi {
+      background: #f7fbf5;
+      border: 1px solid #d7e7d2;
+      border-radius: 22px;
+      padding: 14px 15px;
+      line-height: 1.48;
+      margin: 12px 0;
+    }
+    .guided-kippi strong { color: #416f41; }
+    .guided-input { margin-top: 12px; }
+    .guided-options { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 10px; }
+    .guided-option {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      box-shadow: none;
+      border-radius: 999px;
+      padding: 10px 12px;
+      font-weight: 750;
+    }
+    .guided-option.selected { background: #e9f1e6; border-color: #7ea277; }
+    .guided-nav { display: grid; gap: 10px; }
+    @media (min-width: 620px) { .guided-nav { grid-template-columns: 1fr 1fr 1fr; } }
+    .guided-small { color: var(--muted); font-size: .88rem; line-height: 1.38; }
+    .guided-aside-box {
+      background: linear-gradient(135deg, #fff, #f4eadf);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+    .guided-aside-title { font-weight: 850; color: #416f41; margin-bottom: 6px; }
+    .guided-option:focus { outline: 3px solid rgba(91, 141, 90, .22); }
+
+
+    .ai-panel { display:grid; gap:12px; }
+    .ai-chat {
+      display:grid;
+      gap:10px;
+      max-height: 390px;
+      overflow:auto;
+      padding: 10px;
+      background: rgba(255,255,255,.55);
+      border:1px solid var(--line);
+      border-radius:20px;
+    }
+    .ai-msg {
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:12px 13px;
+      line-height:1.42;
+      background:#fff;
+    }
+    .ai-msg.user { background:#f3eadf; margin-left:26px; }
+    .ai-msg.kippi { background:#f7fbf5; border-color:#d7e7d2; margin-right:26px; }
+    .ai-msg .who { display:block; color:var(--muted); font-size:.78rem; font-weight:850; margin-bottom:4px; }
+    .ai-compose { display:grid; gap:10px; }
+    .ai-compose textarea { min-height:112px; }
+    .ai-toolbar { display:grid; gap:10px; }
+    @media (min-width: 620px) { .ai-toolbar { grid-template-columns: 1fr 1fr 1fr; } }
+    .ai-draft {
+      display:none;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:14px;
+      line-height:1.45;
+    }
+    .ai-draft.active { display:block; }
+    .ai-mode-row { display:grid; gap:10px; }
+    @media (min-width: 620px) { .ai-mode-row { grid-template-columns: 1fr 1fr; } }
+    .privacy-box {
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:12px;
+      color:var(--muted);
+      font-size:.88rem;
+      line-height:1.38;
+    }
+
+
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <h1>Kippi</h1>
+        <p>Damit es nicht kippt.</p>
+      </div>
+      <div class="pill" id="entryCount">0 Einträge</div>
+    </header>
+
+    <main class="hero">
+      <section class="card kippi-card">
+        <div class="kippi" id="kippiFigure" aria-label="Kippi Comicfigur">
+          <div class="body"></div>
+          <div class="leaf"></div>
+          <div class="face">
+            <div class="eye left"></div>
+            <div class="eye right"></div>
+            <div class="cheek left"></div>
+            <div class="cheek right"></div>
+            <div class="mouth"></div>
+          </div>
+        </div>
+        <div class="shadow"></div>
+        <div class="speech" id="kippiSpeech">Hey, ich bin Kippi. Ich helfe dir, kurz hinzuschauen — ohne Druck, ohne Moral.</div>
+        <div class="actions">
+          <button onclick="speakCurrent()">Kippi hören</button>
+          <button class="soft" onclick="populateVoices(); setSpeech('Stimmen geladen. Wähle gern eine Android-, Google- oder deutsche Stimme und teste sie kurz.', true)">Stimmen laden</button>
+          <button class="soft" onclick="say('Hallo, ich bin Kippi. Ich begleite dich Schritt für Schritt — freundlich, aufmerksam und ohne Druck.')">Stimme testen</button>
+          <button class="soft" onclick="resetKippi()">Kippi neu begrüßen</button>
+          <button class="soft" onclick="showScreen('home')">Start</button>
+        </div>
+        <div class="voice-panel" aria-label="Stimmeinstellungen">
+          <label>Stimme
+            <select id="voiceSelect" onchange="saveVoiceSettings()"></select>
+            <span class="hint">Je nach Gerät klingen die verfügbaren Stimmen unterschiedlich.</span>
+          </label>
+          <div class="range-row"><span>Tempo</span><input id="voiceRate" type="range" min="0.72" max="1.08" step="0.01" value="0.86" oninput="saveVoiceSettings()"></div>
+          <div class="range-row"><span>Wärme</span><input id="voicePitch" type="range" min="0.85" max="1.22" step="0.01" value="1.03" oninput="saveVoiceSettings()"></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div id="home" class="screen active">
+          <h2 class="section-title">Wobei soll Kippi helfen?</h2>
+          <p class="hint">Der Prototyp speichert deine Einträge nur lokal in diesem Browser.</p>
+          <div class="guided-intro">
+            <h3>Geführt starten</h3>
+            <p class="hint">Kippi führt dich Schritt für Schritt durch den Eintrag. Jede Antwort wird kurz aufgenommen, rhetorisch gespiegelt und erst dann kommt die nächste Frage.</p>
+            <div class="guided-controls">
+              <label>Art des Eintrags
+                <select id="guidedMode">
+                  <option value="before">Vor dem Konsum</option>
+                  <option value="after">Nach dem Konsum</option>
+                  <option value="morning">Morgen-Check-in</option>
+                </select>
+              </label>
+              <button onclick="startGuidedFlow()">Starten</button>
+            </div>
+          </div>
+          <div class="actions">
+            <button onclick="showScreen('aiCompanion')">Mit Kippi sprechen</button>
+            <button onclick="showScreen('before')">Vor dem Konsum einchecken</button>
+            <button class="secondary" onclick="showScreen('after')">Nach dem Konsum reflektieren</button>
+            <button class="soft" onclick="showScreen('morning')">Morgen-Check-in</button>
+            <button class="soft" onclick="saveNoUseDay()">Heute nicht konsumiert</button>
+          </div>
+          <div class="insights" id="insights"></div>
+          <div class="analysis-panel" id="analysisPanel"></div>
+          <div class="actions" style="margin-top:12px;">
+            <button class="soft" onclick="speakAnalysis()">Auswertung vorlesen</button>
+            <button class="soft" onclick="exportEntries()">Daten exportieren</button>
+            <button class="warn" onclick="clearAllEntries()">Testdaten löschen</button>
+          </div>
+          <h2 class="section-title" style="margin-top:22px;">Tagebuch</h2>
+          <div class="diary" id="diary"></div>
+        </div>
+
+
+        <div id="aiCompanion" class="screen">
+          <h2 class="section-title">Mit Kippi sprechen</h2>
+          <p class="tagline">Erzähl frei, was gerade los ist. Kippi antwortet sprachlich, erkennt grobe Muster und kann daraus einen strukturierten Eintrag vorschlagen.</p>
+          <div class="ai-panel">
+            <div class="ai-mode-row">
+              <label>Gesprächsmodus
+                <select id="aiMode">
+                  <option value="auto">Automatisch erkennen</option>
+                  <option value="before">Vor dem Konsum</option>
+                  <option value="after">Nach dem Konsum</option>
+                  <option value="morning">Morgen-Check-in</option>
+                  <option value="free">Nur sprechen, nicht speichern</option>
+                </select>
+              </label>
+              <label>Optionaler AI-Endpoint
+                <input id="aiEndpoint" value="/api/kippi-chat" placeholder="/api/kippi-chat" onchange="saveAiSettings()" />
+                <span class="hint">Standard: /api/kippi-chat über dein Render-Backend. Ohne erreichbaren Endpoint läuft automatisch der lokale Demo-Begleiter.</span>
+              </label>
+            </div>
+            <div class="privacy-box"><strong>Prototyp-Hinweis:</strong> Der OpenAI-Key liegt sicher im Render-Backend als Environment Variable. An /api/kippi-chat wird nur dein aktueller Gesprächstext plus eine kurze Mustersumme gesendet.</div>
+            <div class="ai-chat" id="aiChatLog" aria-live="polite"></div>
+            <div class="ai-compose">
+              <label>Deine Nachricht an Kippi
+                <textarea id="aiUserText" placeholder="z. B. Ich will eigentlich nur kurz abschalten, aber ich merke, dass es eher Gewohnheit ist ..."></textarea>
+              </label>
+              <div class="ai-toolbar">
+                <button onclick="sendAiMessage()">Kippi antworten lassen</button>
+                <button class="soft" onclick="startDictation()">🎙️ Sprechen</button>
+                <button class="soft" onclick="clearAiChat()">Gespräch leeren</button>
+              </div>
+            </div>
+            <div class="ai-draft" id="aiDraftBox"></div>
+            <div class="actions">
+              <button id="aiSaveButton" onclick="saveAiDraft()" style="display:none;">Vorgeschlagenen Eintrag speichern</button>
+              <button class="soft" onclick="speakLastAiAnswer()">Kippi-Antwort hören</button>
+              <button class="soft" onclick="showScreen('home')">Zurück</button>
+            </div>
+          </div>
+        </div>
+
+
+        <div id="guided" class="screen">
+          <div class="guided-stage">
+            <div class="guided-progress"><div id="guidedProgressFill"></div></div>
+            <div class="guided-question">
+              <div class="guided-small" id="guidedStepLabel">Schritt</div>
+              <h2 id="guidedTitle">Kippi fragt.</h2>
+              <p class="hint" id="guidedHint"></p>
+              <div class="guided-kippi" id="guidedKippiText">Kippi ist da.</div>
+              <div class="guided-input" id="guidedInputHost"></div>
+            </div>
+            <div class="guided-nav">
+              <button onclick="guidedNext()" id="guidedNextButton">Weiter</button>
+              <button class="soft" onclick="guidedRepeat()">Kippi nochmal hören</button>
+              <button class="soft" onclick="guidedCancel()">Abbrechen</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="before" class="screen">
+          <h2 class="section-title">Vor dem Konsum</h2>
+          <div class="form-grid">
+            <label>Wie geht es dir gerade?
+              <select id="moodBefore">
+                <option>ruhig</option><option>gestresst</option><option>traurig</option><option>gelangweilt</option><option>angespannt</option><option>gut</option>
+              </select>
+            </label>
+            <label>Warum möchtest du konsumieren?
+              <div class="chips" data-target="reasonBefore">
+                <button class="chip" type="button">Genuss</button><button class="chip" type="button">Stress</button><button class="chip" type="button">Schlaf</button><button class="chip" type="button">Langeweile</button><button class="chip" type="button">Belohnung</button><button class="chip" type="button">Gewohnheit</button><button class="chip" type="button">Sozial</button>
+              </div>
+              <input id="reasonBefore" type="hidden" />
+            </label>
+            <label>Was erhoffst du dir?
+              <input id="expectationBefore" placeholder="z. B. runterkommen, abschalten, lachen ..." />
+            </label>
+            <label>Sorte/Form/Menge ungefähr
+              <input id="amountBefore" placeholder="z. B. Vaporizer, Joint, Sorte, wenig/mittel/viel" />
+            </label>
+            <label>Notiz
+              <textarea id="noteBefore" placeholder="Was wäre wichtig für dein späteres Ich?"></textarea>
+            </label>
+            <div class="actions">
+              <button onclick="saveBefore()">Eintrag speichern</button>
+              <button class="soft" onclick="showScreen('home')">Abbrechen</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="after" class="screen">
+          <h2 class="section-title">Nach dem Konsum</h2>
+          <div class="form-grid">
+            <label>Hat es dir gegeben, was du gesucht hast?
+              <select id="helpedAfter">
+                <option>ja</option><option>teilweise</option><option>nein</option><option>weiß nicht</option>
+              </select>
+            </label>
+            <label>Wie war deine Stimmung danach?
+              <select id="moodAfter">
+                <option>entspannt</option><option>klar</option><option>müde</option><option>grübelnd</option><option>unruhig</option><option>zufrieden</option>
+              </select>
+            </label>
+            <label>Welche Situation / welcher Auslöser passt am ehesten?
+              <select id="contextAfter">
+                <option>Genuss</option><option>Stress</option><option>Schlaf</option><option>Langeweile</option><option>Belohnung</option><option>Gewohnheit</option><option>Sozial</option><option>unklar</option>
+              </select>
+              <span class="hint">Damit Kippi später Situationen miteinander vergleichen kann.</span>
+            </label>
+            <label>Sorte/Form/Menge ungefähr
+              <input id="amountAfter" placeholder="z. B. Vaporizer, Joint, Sorte, wenig/mittel/viel" />
+            </label>
+            <div class="score-grid">
+              <h3>Kippi-Score <span class="hint">1 = niedrig, 10 = stark/gut</span></h3>
+              <p class="mini-note">Bewerte mehrere Eigenschaften wie bei einem Restaurant. Daraus berechnet Kippi später Gesamtwert, Wohlfühlwert, Klarheitswert und Folgekosten.</p>
+              <div class="score-row"><span>Entspannung</span><input id="scoreRelax" type="range" min="1" max="10" value="5" oninput="scoreOut('scoreRelax')"><output id="scoreRelaxOut">5</output></div>
+              <div class="score-row"><span>Stimmung</span><input id="scoreMood" type="range" min="1" max="10" value="5" oninput="scoreOut('scoreMood')"><output id="scoreMoodOut">5</output></div>
+              <div class="score-row"><span>Klarheit</span><input id="scoreClarity" type="range" min="1" max="10" value="5" oninput="scoreOut('scoreClarity')"><output id="scoreClarityOut">5</output></div>
+              <div class="score-row"><span>Körpergefühl</span><input id="scoreBody" type="range" min="1" max="10" value="5" oninput="scoreOut('scoreBody')"><output id="scoreBodyOut">5</output></div>
+              <div class="score-row"><span>Schlaf/Folgetag</span><input id="scoreSleep" type="range" min="1" max="10" value="5" oninput="scoreOut('scoreSleep')"><output id="scoreSleepOut">5</output></div>
+              <div class="score-row"><span>Energie</span><input id="scoreEnergy" type="range" min="1" max="10" value="5" oninput="scoreOut('scoreEnergy')"><output id="scoreEnergyOut">5</output></div>
+              <div class="score-row"><span>Kontrolle</span><input id="scoreControl" type="range" min="1" max="10" value="5" oninput="scoreOut('scoreControl')"><output id="scoreControlOut">5</output></div>
+              <div class="score-row"><span>wenig Nebenwirkung</span><input id="scoreSideFree" type="range" min="1" max="10" value="5" oninput="scoreOut('scoreSideFree')"><output id="scoreSideFreeOut">5</output></div>
+            </div>
+            <label>Nebenwirkungen oder Kipppunkt?
+              <input id="sideAfter" placeholder="z. B. Heißhunger, Grübeln, Herzklopfen, nichts" />
+            </label>
+            <label>Wie würdest du es bewerten? <span class="hint">1 = nicht gut, 5 = sehr gut</span>
+              <select id="ratingAfter"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select>
+            </label>
+            <label>Notiz
+              <textarea id="noteAfter" placeholder="Was würdest du deinem zukünftigen Ich sagen?"></textarea>
+            </label>
+            <div class="actions">
+              <button onclick="saveAfter()">Reflexion speichern</button>
+              <button class="soft" onclick="showScreen('home')">Abbrechen</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="morning" class="screen">
+          <h2 class="section-title">Morgen-Check-in</h2>
+          <p class="tagline">Der Morgen ist oft ehrlicher als der Moment. Kippi schaut hier besonders auf Schlaf, Klarheit und Folgekosten.</p>
+          <div class="form-grid">
+            <label>Worauf bezieht sich der Check-in?
+              <input id="morningStrain" placeholder="z. B. Sorte/Form von gestern, Situation oder leer lassen" />
+              <span class="hint">Wenn du hier denselben Sorten-/Formnamen wie beim Nachher-Eintrag nutzt, kann Kippi später besser vergleichen.</span>
+            </label>
+            <label>Wie fühlst du dich heute Morgen?
+              <select id="morningMood">
+                <option>klar</option><option>müde</option><option>ruhig</option><option>gereizt</option><option>vernebelt</option><option>ausgeglichen</option><option>schwer einzuordnen</option>
+              </select>
+            </label>
+            <div class="score-grid">
+              <h3>Morgenwerte <span class="hint">1 = niedrig, 10 = sehr gut</span></h3>
+              <div class="score-row"><span>Schlafqualität</span><input id="morningSleep" type="range" min="1" max="10" value="5" oninput="scoreOut('morningSleep')"><output id="morningSleepOut">5</output></div>
+              <div class="score-row"><span>Energie</span><input id="morningEnergy" type="range" min="1" max="10" value="5" oninput="scoreOut('morningEnergy')"><output id="morningEnergyOut">5</output></div>
+              <div class="score-row"><span>Klarheit</span><input id="morningClarity" type="range" min="1" max="10" value="5" oninput="scoreOut('morningClarity')"><output id="morningClarityOut">5</output></div>
+              <div class="score-row"><span>Stimmung</span><input id="morningMoodScore" type="range" min="1" max="10" value="5" oninput="scoreOut('morningMoodScore')"><output id="morningMoodScoreOut">5</output></div>
+              <div class="score-row"><span>Körpergefühl</span><input id="morningBody" type="range" min="1" max="10" value="5" oninput="scoreOut('morningBody')"><output id="morningBodyOut">5</output></div>
+              <div class="score-row"><span>kein Bedauern</span><input id="morningNoRegret" type="range" min="1" max="10" value="5" oninput="scoreOut('morningNoRegret')"><output id="morningNoRegretOut">5</output></div>
+            </div>
+            <label>Notiz zum Folgetag
+              <textarea id="morningNote" placeholder="z. B. gut geschlafen, träger Start, überraschend klar, Reue, alles okay ..."></textarea>
+            </label>
+            <div class="actions">
+              <button onclick="saveMorning()">Morgen-Check-in speichern</button>
+              <button class="soft" onclick="showScreen('home')">Abbrechen</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <p class="footer">Kippi ist ein Reflexionswerkzeug und ersetzt keine medizinische oder therapeutische Beratung.</p>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'kippi_entries_v1';
+    const VOICE_KEY = 'kippi_voice_settings_v2';
+    let entries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    let voices = [];
+
+    const phrases = {
+      welcome: 'Hey, schön, dass du da bist. Ich bin Kippi. Wir schauen nur kurz hin — freundlich, ehrlich und ohne Druck.',
+      before: 'Okay. Bevor du entscheidest, atmen wir innerlich einmal durch. Was ist gerade der Grund?',
+      after: 'Danke, dass du nochmal zurückschaust. Ganz ruhig: Hat es dir wirklich gegeben, was du gesucht hast?',
+      morning: 'Guten Morgen. Jetzt schauen wir nicht auf den Moment, sondern auf die Spur, die er hinterlassen hat.',
+      saved: 'Gespeichert. Das war kein Autopilot. Du hast kurz hingeschaut — und genau darum geht es.',
+      noUse: 'Heute nicht konsumiert. Stark. Auch solche Tage sind wichtig, damit dein Bild vollständig bleibt.'
+    };
+
+    function setSpeech(text, speak = false) {
+      document.getElementById('kippiSpeech').textContent = text;
+      if (speak) say(text);
+    }
+
+    function getVoiceSettings() {
+      const saved = JSON.parse(localStorage.getItem(VOICE_KEY) || '{}');
+      return {
+        voiceURI: saved.voiceURI || '',
+        rate: Number(document.getElementById('voiceRate')?.value || saved.rate || 0.86),
+        pitch: Number(document.getElementById('voicePitch')?.value || saved.pitch || 1.03)
+      };
+    }
+
+    function saveVoiceSettings() {
+      const select = document.getElementById('voiceSelect');
+      const rate = document.getElementById('voiceRate');
+      const pitch = document.getElementById('voicePitch');
+      localStorage.setItem(VOICE_KEY, JSON.stringify({
+        voiceURI: select?.value || '',
+        rate: Number(rate?.value || 0.86),
+        pitch: Number(pitch?.value || 1.03)
+      }));
+    }
+
+    function populateVoices() {
+      if (!('speechSynthesis' in window)) return;
+      voices = window.speechSynthesis.getVoices();
+      const select = document.getElementById('voiceSelect');
+      if (!select) return;
+      const germanVoices = voices.filter(v => (v.lang || '').toLowerCase().startsWith('de'));
+      const options = germanVoices.length ? germanVoices : voices;
+      const saved = JSON.parse(localStorage.getItem(VOICE_KEY) || '{}');
+      const best = pickBestVoice(options);
+      select.innerHTML = options.map(v => `<option value="${escapeHtml(v.voiceURI)}">${escapeHtml(v.name)} (${escapeHtml(v.lang)})</option>`).join('');
+      select.value = saved.voiceURI || best?.voiceURI || options[0]?.voiceURI || '';
+      if (saved.rate) document.getElementById('voiceRate').value = saved.rate;
+      if (saved.pitch) document.getElementById('voicePitch').value = saved.pitch;
+      saveVoiceSettings();
+    }
+
+    function pickBestVoice(list) {
+      const preferred = ['Google Deutsch', 'Microsoft Katja', 'Microsoft Hedda', 'Anna', 'Google de-DE', 'deutsch'];
+      return list.find(v => preferred.some(p => v.name.toLowerCase().includes(p.toLowerCase()))) || list[0];
+    }
+
+    function say(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      const settings = getVoiceSettings();
+      const selected = voices.find(v => v.voiceURI === settings.voiceURI) || pickBestVoice(voices.filter(v => (v.lang || '').toLowerCase().startsWith('de'))) || null;
+      if (selected) u.voice = selected;
+      u.lang = selected?.lang || 'de-DE';
+      u.rate = settings.rate;
+      u.pitch = settings.pitch;
+      u.volume = 1;
+      const fig = document.getElementById('kippiFigure');
+      u.onstart = () => fig?.classList.add('speaking');
+      u.onend = () => fig?.classList.remove('speaking');
+      u.onerror = () => fig?.classList.remove('speaking');
+      window.speechSynthesis.speak(u);
+    }
+
+    function escapeHtml(str) {
+      return String(str).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    }
+
+    function speakCurrent() { say(document.getElementById('kippiSpeech').textContent); }
+    function resetKippi() { setSpeech(phrases.welcome, true); }
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      if (id === 'before') setSpeech(phrases.before, true);
+      if (id === 'after') setSpeech(phrases.after, true);
+      if (id === 'morning') setSpeech(phrases.morning, true);
+      if (id === 'aiCompanion') initAiCompanion();
+      if (id === 'home') render();
+    }
+
+    document.querySelectorAll('.chips').forEach(group => {
+      group.addEventListener('click', e => {
+        if (!e.target.classList.contains('chip')) return;
+        group.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+        e.target.classList.add('selected');
+        document.getElementById(group.dataset.target).value = e.target.textContent;
+      });
+    });
+
+    function save(entry) {
+      entries.unshift({ ...entry, id: crypto.randomUUID(), date: new Date().toISOString() });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+      render();
+      showScreen('home');
+      setSpeech(phrases.saved, true);
+    }
+
+    function saveBefore() {
+      save({
+        type: 'Vor dem Konsum',
+        mood: val('moodBefore'),
+        reason: val('reasonBefore') || 'nicht ausgewählt',
+        expectation: val('expectationBefore'),
+        amount: val('amountBefore'),
+        note: val('noteBefore')
+      });
+      clearFields(['expectationBefore','amountBefore','noteBefore','reasonBefore']);
+      document.querySelectorAll('.chip.selected').forEach(c => c.classList.remove('selected'));
+    }
+
+    function saveAfter() {
+      save({
+        type: 'Nach dem Konsum',
+        helped: val('helpedAfter'),
+        mood: val('moodAfter'),
+        context: val('contextAfter'),
+        amount: val('amountAfter'),
+        side: val('sideAfter'),
+        rating: val('ratingAfter'),
+        scores: collectScores(),
+        note: val('noteAfter')
+      });
+      clearFields(['amountAfter','sideAfter','noteAfter']);
+      resetScoreSliders();
+    }
+
+
+    function saveMorning() {
+      save({
+        type: 'Morgen-Check-in',
+        strain: val('morningStrain'),
+        mood: val('morningMood'),
+        morningScores: collectMorningScores(),
+        note: val('morningNote')
+      });
+      clearFields(['morningStrain','morningNote']);
+      resetMorningSliders();
+    }
+
+    function scoreOut(id) {
+      const el = document.getElementById(id);
+      const out = document.getElementById(id + 'Out');
+      if (el && out) out.textContent = el.value;
+    }
+
+    function collectScores() {
+      return {
+        relaxation: Number(val('scoreRelax')),
+        mood: Number(val('scoreMood')),
+        clarity: Number(val('scoreClarity')),
+        body: Number(val('scoreBody')),
+        sleep: Number(val('scoreSleep')),
+        energy: Number(val('scoreEnergy')),
+        control: Number(val('scoreControl')),
+        sideFree: Number(val('scoreSideFree'))
+      };
+    }
+
+    function collectMorningScores() {
+      return {
+        sleep: Number(val('morningSleep')),
+        energy: Number(val('morningEnergy')),
+        clarity: Number(val('morningClarity')),
+        mood: Number(val('morningMoodScore')),
+        body: Number(val('morningBody')),
+        noRegret: Number(val('morningNoRegret'))
+      };
+    }
+
+    function resetMorningSliders() {
+      ['morningSleep','morningEnergy','morningClarity','morningMoodScore','morningBody','morningNoRegret'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.value = 5; scoreOut(id); }
+      });
+    }
+
+    function resetScoreSliders() {
+      ['scoreRelax','scoreMood','scoreClarity','scoreBody','scoreSleep','scoreEnergy','scoreControl','scoreSideFree'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.value = 5; scoreOut(id); }
+      });
+    }
+
+    function saveNoUseDay() {
+      entries.unshift({ type: 'Konsumfreier Tag', date: new Date().toISOString(), id: crypto.randomUUID(), note: 'Heute nicht konsumiert.' });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+      render();
+      setSpeech(phrases.noUse, true);
+    }
+
+    function val(id) { return document.getElementById(id).value.trim(); }
+    function clearFields(ids) { ids.forEach(id => document.getElementById(id).value = ''); }
+
+    function render() {
+      document.getElementById('entryCount').textContent = entries.length + (entries.length === 1 ? ' Eintrag' : ' Einträge');
+      renderDiary();
+      renderInsights();
+      renderAnalysis();
+    }
+
+    function renderDiary() {
+      const diary = document.getElementById('diary');
+      if (!entries.length) {
+        diary.innerHTML = '<div class="entry">Noch keine Einträge. Kippi wartet geduldig.</div>';
+        return;
+      }
+      diary.innerHTML = entries.slice(0, 8).map(e => {
+        const date = new Date(e.date).toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' });
+        let body = '';
+        if (e.type === 'Vor dem Konsum') body = `<strong>${e.reason}</strong> · Stimmung: ${e.mood || '—'}<br>Erwartung: ${e.expectation || '—'}<br>Menge/Form: ${e.amount || '—'}<br>${e.note || ''}`;
+        else if (e.type === 'Nach dem Konsum') {
+          const scoreText = e.scores ? `<br>Kippi-Score: <strong>${calcEntryScores(e).overall.toFixed(1)}/10</strong> · Wohl: ${calcEntryScores(e).wellbeing.toFixed(1)} · Klarheit: ${calcEntryScores(e).clarity.toFixed(1)} · Folgekosten: ${calcEntryScores(e).follow.toFixed(1)}` : '';
+          body = `Geholfen: <strong>${e.helped}</strong> · Stimmung: ${e.mood || '—'} · Situation: ${e.context || '—'} · Bewertung: ${e.rating}/5<br>Menge/Form: ${e.amount || '—'}<br>Nebenwirkungen: ${e.side || '—'}${scoreText}<br>${e.note || ''}`;
+        }
+        else if (e.type === 'Morgen-Check-in') {
+          const m = calcMorningScores(e);
+          body = `Morgengefühl: <strong>${e.mood || '—'}</strong> · Bezug: ${e.strain || '—'}<br>Morgenwert: <strong>${m.overall.toFixed(1)}/10</strong> · Schlaf: ${m.sleep.toFixed(1)} · Klarheit: ${m.clarity.toFixed(1)} · Energie: ${m.energy.toFixed(1)}<br>${e.note || ''}`;
+        }
+        else body = e.note;
+        const asideHtml = e.asides && e.asides.length ? `<br><span class="mini-note">Kippi-Zwischenfragen: ${e.asides.map(a => `${escapeHtml(a.question)} → <strong>${escapeHtml(a.answer)}</strong>`).join(' · ')}</span>` : '';
+        return `<div class="entry"><div class="entry-top"><span>${e.type}</span><span>${date}</span></div>${body}${asideHtml}</div>`;
+      }).join('');
+    }
+
+    function renderInsights() {
+      const box = document.getElementById('insights');
+      const a = buildAnalysis();
+      if (entries.length < 2) {
+        box.innerHTML = '<div class="insight">Kippi erkennt Muster, sobald ein paar Einträge da sind. Zwei bis drei Testeinträge reichen für erste Hinweise.</div>';
+        return;
+      }
+      box.innerHTML = a.kippiNotes.map(l => `<div class="insight">${l}</div>`).join('');
+    }
+
+    function renderAnalysis() {
+      const panel = document.getElementById('analysisPanel');
+      if (!panel) return;
+      const a = buildAnalysis();
+      if (entries.length < 2) {
+        panel.innerHTML = '';
+        return;
+      }
+      panel.innerHTML = `
+        <h2 class="section-title" style="margin-top:8px;">Auswertung</h2>
+        <p class="tagline">Kippi rechnet bewusst nicht nur Summen aus. Er sucht nach kleinen Mustern, die man im Alltag leicht übersieht.</p>
+        <div class="metric-grid">
+          ${metric('Einträge', entries.length, 'gesamt')}
+          ${metric('Ø Bewertung', a.avgRatingText, 'nach Konsum')}
+          ${metric('Quote erfüllt', a.helpedRateText, 'ja oder teilweise')}
+          ${metric('Kippi-Score', a.scoreSummary.overallText, 'mehrdimensional')}
+          ${metric('Balance', a.balanceText, 'konsumfrei vs. Konsum')}
+        </div>
+        ${scoreBlock(a.scoreSummary)}
+        ${timelineBlock('Kippi-Score im Verlauf', a.timeline, 'overall')}
+        ${multiTimelineBlock('Durchschnittswerte im Verlauf', a.timeline)}
+        ${comparisonBlock('Vergleich nach Situation', a.contextComparison)}
+        ${strainComparisonBlock('Sorten-/Form-Vergleich', a.strainComparison)}
+        ${morningBlock(a.morningSummary, a.morningTimeline)}
+        ${weekReviewBlock(a.weekReview)}
+        ${warningBlock(a.warningNotes)}
+        ${barBlock('Auslöser', a.reasonBars)}
+        ${barBlock('Stimmung vor dem Konsum', a.moodBeforeBars)}
+        ${barBlock('Stimmung nach dem Konsum', a.moodAfterBars)}
+        <h3 style="margin:8px 0 0;">Komplexere Hinweise</h3>
+        <div class="insights">${a.deeperNotes.map(x => `<div class="insight">${x}</div>`).join('')}</div>
+      `;
+    }
+
+    function buildAnalysis() {
+      const before = entries.filter(e => e.type === 'Vor dem Konsum');
+      const after = entries.filter(e => e.type === 'Nach dem Konsum');
+      const noUse = entries.filter(e => e.type === 'Konsumfreier Tag');
+      const mornings = entries.filter(e => e.type === 'Morgen-Check-in');
+      const ratings = after.map(e => Number(e.rating)).filter(n => Number.isFinite(n));
+      const avgRating = ratings.length ? ratings.reduce((a,b)=>a+b,0) / ratings.length : null;
+      const helpedGood = after.filter(e => ['ja','teilweise'].includes((e.helped||'').toLowerCase())).length;
+      const helpedRate = after.length ? helpedGood / after.length : null;
+      const consumptionEntries = before.length + after.length;
+      const balance = noUse.length + consumptionEntries ? noUse.length / (noUse.length + consumptionEntries) : null;
+
+      const reasons = count(before.map(e => e.reason).filter(x => x && x !== 'nicht ausgewählt'));
+      const moodBefore = count(before.map(e => e.mood));
+      const moodAfter = count(after.map(e => e.mood));
+      const topReason = topEntry(reasons);
+      const topMoodBefore = topEntry(moodBefore);
+      const lowRatings = after.filter(e => Number(e.rating) <= 2).length;
+      const highRatings = after.filter(e => Number(e.rating) >= 4).length;
+      const notHelped = after.filter(e => ['nein','weiß nicht'].includes((e.helped||'').toLowerCase())).length;
+      const sideFilled = after.filter(e => (e.side||'').trim() && !['nichts','keine','nein','-'].includes((e.side||'').trim().toLowerCase())).length;
+      const lateEntries = entries.filter(e => new Date(e.date).getHours() >= 22 || new Date(e.date).getHours() < 4).length;
+      const scoreSummary = buildScoreSummary(after);
+      const contextComparison = buildGroupComparison(after, 'context');
+      const strainComparison = buildStrainComparison(after, mornings);
+      const morningSummary = buildMorningSummary(mornings);
+      const morningTimeline = buildMorningTimeline(mornings);
+      const weekReview = buildWeekReview(before, after, noUse, mornings);
+      const timeline = buildTimeline(after);
+
+      const kippiNotes = [];
+      if (topReason) kippiNotes.push(`Häufigster Auslöser bisher: <strong>${escapeHtml(topReason[0])}</strong> (${topReason[1]}×).`);
+      if (avgRating !== null) kippiNotes.push(`Deine durchschnittliche Nachher-Bewertung liegt bei <strong>${avgRating.toFixed(1)}/5</strong>.`);
+      if (scoreSummary.count) kippiNotes.push(`Dein mehrdimensionaler Kippi-Score liegt aktuell bei <strong>${scoreSummary.overall.toFixed(1)}/10</strong>.`);
+      if (noUse.length) kippiNotes.push(`Konsumfreie Tage eingetragen: <strong>${noUse.length}</strong>. Das macht dein Tagebuch ehrlicher, weil nicht nur Konsum sichtbar wird.`);
+      if (lowRatings) kippiNotes.push(`Auffällig: <strong>${lowRatings}</strong> Reflexion(en) lagen bei 1–2 von 5. Diese Einträge wären gute Kandidaten zum späteren Nachlesen.`);
+      if (!kippiNotes.length) kippiNotes.push('Noch zu wenig Daten für ein klares Muster.');
+
+      const deeperNotes = [];
+      if (topReason && before.length >= 2) {
+        const share = topReason[1] / before.length;
+        deeperNotes.push(`Auslöser-Konzentration: <strong>${Math.round(share*100)}%</strong> deiner Vorher-Check-ins drehen sich um <strong>${escapeHtml(topReason[0])}</strong>. Wenn ein einzelner Grund sehr dominant wird, lohnt sich die Frage: Ist das noch Genuss oder schon Standardlösung?`);
+      }
+      if (helpedRate !== null) {
+        deeperNotes.push(`Erwartungsabgleich: In <strong>${Math.round(helpedRate*100)}%</strong> der Nachher-Einträge hat der Konsum dir ganz oder teilweise gegeben, was du gesucht hast. Interessant sind besonders die übrigen ${Math.round((1-helpedRate)*100)}%: Dort war der Nutzen vermutlich schwächer als die Erwartung.`);
+      }
+      if (avgRating !== null) {
+        let tone = avgRating >= 4 ? 'eher positiv' : avgRating >= 3 ? 'gemischt' : 'eher kritisch';
+        deeperNotes.push(`Bewertungsniveau: Ø <strong>${avgRating.toFixed(1)}/5</strong> wirkt bisher <strong>${tone}</strong>. Kippi würde hier nicht urteilen, sondern fragen: Welche Situationen ziehen den Schnitt runter?`);
+      }
+      if (scoreSummary.count) {
+        const gap = Math.abs(scoreSummary.wellbeing - scoreSummary.clarity);
+        if (gap >= 1.5) deeperNotes.push(`Mehrdimensionaler Unterschied: Dein Wohlfühlwert (${scoreSummary.wellbeing.toFixed(1)}) und dein Klarheitswert (${scoreSummary.clarity.toFixed(1)}) liegen spürbar auseinander. Das heißt: Etwas kann sich gut anfühlen und trotzdem mental weniger klar sein — genau solche Unterschiede erkennt man intuitiv oft nicht.`);
+        if (scoreSummary.follow < scoreSummary.wellbeing - 1.2) deeperNotes.push(`Folgekosten-Muster: Der Folgekostenwert (${scoreSummary.follow.toFixed(1)}) liegt merklich unter dem Wohlfühlwert (${scoreSummary.wellbeing.toFixed(1)}). Kippi würde fragen: Ist der Moment stärker als der nächste Morgen?`);
+        const weakest = scoreSummary.dimensions.slice().sort((a,b)=>a.avg-b.avg)[0];
+        if (weakest) deeperNotes.push(`Schwächste Dimension bisher: <strong>${escapeHtml(weakest.label)}</strong> mit Ø <strong>${weakest.avg.toFixed(1)}/10</strong>. Das ist oft hilfreicher als ein Gesamturteil, weil es zeigt, wo genau etwas kippt.`);
+      }
+      if (contextComparison.length >= 2) {
+        const best = contextComparison[0], worst = contextComparison[contextComparison.length - 1];
+        if (best.avg - worst.avg >= 1) deeperNotes.push(`Situationsvergleich: <strong>${escapeHtml(best.label)}</strong> liegt mit Ø ${best.avg.toFixed(1)}/10 bisher höher als <strong>${escapeHtml(worst.label)}</strong> mit Ø ${worst.avg.toFixed(1)}/10. Das ist ein erster Hinweis, welche Konsum-Situation für dich ausgewogener wirkt.`);
+      }
+      if (sideFilled && after.length) {
+        deeperNotes.push(`Nebenwirkungs-Signal: Bei <strong>${sideFilled} von ${after.length}</strong> Nachher-Einträgen hast du etwas Auffälliges notiert. Das ist oft aussagekräftiger als die reine Menge.`);
+      }
+      if (lateEntries >= 2) {
+        deeperNotes.push(`Zeitmuster: <strong>${lateEntries}</strong> Einträge liegen spät abends oder nachts. Später Konsum kann sich anders auf Schlaf und nächsten Morgen auswirken — dafür wäre ein Morgen-Check-in später sehr sinnvoll.`);
+      }
+      if (topMoodBefore) {
+        deeperNotes.push(`Stimmungsanker: Vorher taucht <strong>${escapeHtml(topMoodBefore[0])}</strong> am häufigsten auf. Das kann ein Hinweis sein, welche innere Lage besonders oft mit Konsum verknüpft ist.`);
+      }
+      if (highRatings && lowRatings) {
+        deeperNotes.push(`Spannung im Muster: Es gibt sowohl hohe als auch niedrige Bewertungen. Das ist gut analysierbar: Nicht „Cannabis ja/nein“, sondern <strong>welche Bedingungen machen den Unterschied?</strong>`);
+      }
+      if (morningSummary.count) {
+        deeperNotes.push(`Morgen-Check-in: Dein Folgetag-Wert liegt bisher bei <strong>${morningSummary.overall.toFixed(1)}/10</strong>. Das ergänzt die Nachher-Bewertung, weil der Moment und der nächste Morgen manchmal unterschiedlich ausfallen.`);
+      }
+      if (strainComparison.length >= 2) {
+        const bestS = strainComparison[0], worstS = strainComparison[strainComparison.length - 1];
+        if (bestS.afterAvg && worstS.afterAvg && bestS.afterAvg - worstS.afterAvg >= 0.8) deeperNotes.push(`Sorten-/Form-Vergleich: <strong>${escapeHtml(bestS.label)}</strong> wirkt bisher ausgewogener als <strong>${escapeHtml(worstS.label)}</strong>. Bei wenigen Einträgen ist das noch eine Spur, aber genau solche Spuren ersetzen später Excel-Tabellen.`);
+      }
+      const warningNotes = buildWarningNotes(timeline, scoreSummary, morningSummary, contextComparison);
+      if (!deeperNotes.length) deeperNotes.push('Noch wenige komplexe Hinweise. Trage ruhig ein paar Tage echte Situationen ein — dann erkennt Kippi deutlich mehr als reine Durchschnittswerte.');
+
+      return {
+        avgRatingText: avgRating === null ? '—' : avgRating.toFixed(1) + '/5',
+        helpedRateText: helpedRate === null ? '—' : Math.round(helpedRate * 100) + '%',
+        balanceText: balance === null ? '—' : Math.round(balance * 100) + '% frei',
+        reasonBars: toBars(reasons),
+        moodBeforeBars: toBars(moodBefore),
+        moodAfterBars: toBars(moodAfter),
+        scoreSummary,
+        contextComparison,
+        strainComparison,
+        morningSummary,
+        morningTimeline,
+        weekReview,
+        warningNotes,
+        timeline,
+        kippiNotes,
+        deeperNotes,
+        spoken: makeSpokenSummary(avgRating, helpedRate, topReason, lowRatings, noUse.length, topMoodBefore, scoreSummary)
+      };
+    }
+
+    function makeSpokenSummary(avgRating, helpedRate, topReason, lowRatings, noUseCount, topMoodBefore, scoreSummary) {
+      let parts = ['Hier ist deine kurze Auswertung.'];
+      if (topReason) parts.push(`Der häufigste Auslöser ist bisher ${topReason[0]}.`);
+      if (avgRating !== null) parts.push(`Die durchschnittliche Bewertung nach dem Konsum liegt bei ${avgRating.toFixed(1)} von 5.`);
+      if (scoreSummary?.count) parts.push(`Der mehrdimensionale Kippi Score liegt bei ${scoreSummary.overall.toFixed(1)} von 10. Wohlgefühl ${scoreSummary.wellbeing.toFixed(1)}, Klarheit ${scoreSummary.clarity.toFixed(1)}, Folgekosten ${scoreSummary.follow.toFixed(1)}.`);
+      if (helpedRate !== null) parts.push(`In etwa ${Math.round(helpedRate*100)} Prozent der Fälle hat es ganz oder teilweise geholfen.`);
+      if (topMoodBefore) parts.push(`Vorher taucht ${topMoodBefore[0]} am häufigsten als Stimmung auf.`);
+      if (lowRatings) parts.push(`${lowRatings} Einträge waren eher niedrig bewertet. Die könnten besonders interessant sein.`);
+      if (noUseCount) parts.push(`Du hast außerdem ${noUseCount} konsumfreie Tage eingetragen. Das ist wichtig für ein vollständiges Bild.`);
+      parts.push('Kippi urteilt nicht. Kippi schaut mit dir hin.');
+      return parts.join(' ');
+    }
+
+
+    function calcEntryScores(e) {
+      const s = e.scores || {};
+      const vals = ['relaxation','mood','clarity','body','sleep','energy','control','sideFree'].map(k => Number(s[k])).filter(n => Number.isFinite(n));
+      const avg = arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0;
+      const wellbeing = avg([s.relaxation, s.mood, s.body].map(Number).filter(Number.isFinite));
+      const clarity = avg([s.clarity, s.control].map(Number).filter(Number.isFinite));
+      const follow = avg([s.sleep, s.energy, s.sideFree].map(Number).filter(Number.isFinite));
+      return { overall: avg(vals), wellbeing, clarity, follow };
+    }
+
+
+    function normalizeLabel(text) {
+      const raw = String(text || '').trim();
+      if (!raw) return 'nicht angegeben';
+      return raw.split(/[;,|]/)[0].replace(/\s+/g, ' ').slice(0, 38);
+    }
+
+    function calcMorningScores(e) {
+      const s = e.morningScores || {};
+      const values = ['sleep','energy','clarity','mood','body','noRegret'].map(k => Number(s[k])).filter(Number.isFinite);
+      const avg = values.length ? values.reduce((a,b)=>a+b,0)/values.length : 0;
+      return {
+        overall: avg,
+        sleep: Number(s.sleep) || 0,
+        energy: Number(s.energy) || 0,
+        clarity: Number(s.clarity) || 0,
+        mood: Number(s.mood) || 0,
+        body: Number(s.body) || 0,
+        noRegret: Number(s.noRegret) || 0
+      };
+    }
+
+    function buildMorningSummary(mornings) {
+      const scored = mornings.filter(e => e.morningScores);
+      const vals = scored.map(e => calcMorningScores(e));
+      const avgKey = key => vals.length ? vals.reduce((a,b)=>a+b[key],0)/vals.length : 0;
+      return { count: scored.length, overall: avgKey('overall'), sleep: avgKey('sleep'), energy: avgKey('energy'), clarity: avgKey('clarity'), mood: avgKey('mood'), body: avgKey('body'), noRegret: avgKey('noRegret') };
+    }
+
+    function buildMorningTimeline(mornings) {
+      return mornings.filter(e => e.morningScores).slice().sort((a,b)=>new Date(a.date)-new Date(b.date)).map((e,i) => {
+        const c = calcMorningScores(e);
+        return { index:i+1, date:e.date, label:new Date(e.date).toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit'}), context:e.strain || e.mood || 'Morgen', overall:c.overall, wellbeing:c.mood, clarity:c.clarity, follow:(c.sleep+c.energy+c.noRegret)/3 };
+      });
+    }
+
+    function buildStrainComparison(after, mornings) {
+      const groups = {};
+      after.filter(e => e.scores).forEach(e => {
+        const label = normalizeLabel(e.amount);
+        const c = calcEntryScores(e);
+        const g = groups[label] ||= { label, after: [], morning: [] };
+        g.after.push(c);
+      });
+      mornings.filter(e => e.morningScores).forEach(e => {
+        const label = normalizeLabel(e.strain);
+        const c = calcMorningScores(e);
+        const g = groups[label] ||= { label, after: [], morning: [] };
+        g.morning.push(c);
+      });
+      const avg = arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : null;
+      return Object.values(groups).map(g => {
+        const afterOverall = avg(g.after.map(x=>x.overall));
+        const morningOverall = avg(g.morning.map(x=>x.overall));
+        const combinedVals = [...g.after.map(x=>x.overall), ...g.morning.map(x=>x.overall)];
+        return {
+          label:g.label,
+          count:g.after.length + g.morning.length,
+          afterCount:g.after.length,
+          morningCount:g.morning.length,
+          afterAvg: afterOverall,
+          morningAvg: morningOverall,
+          combined: avg(combinedVals)
+        };
+      }).filter(x => x.count).sort((a,b)=>(b.combined||0)-(a.combined||0));
+    }
+
+    function buildWeekReview(before, after, noUse, mornings) {
+      const since = Date.now() - 7*24*60*60*1000;
+      const inWeek = arr => arr.filter(e => new Date(e.date).getTime() >= since);
+      const b = inWeek(before), a = inWeek(after), n = inWeek(noUse), m = inWeek(mornings);
+      const scoreVals = a.filter(e=>e.scores).map(e=>calcEntryScores(e).overall);
+      const morningVals = m.filter(e=>e.morningScores).map(e=>calcMorningScores(e).overall);
+      const avg = arr => arr.length ? arr.reduce((x,y)=>x+y,0)/arr.length : null;
+      const topReason = topEntry(count(b.map(e=>e.reason).filter(x => x && x !== 'nicht ausgewählt')));
+      return { before:b.length, after:a.length, noUse:n.length, mornings:m.length, scoreAvg:avg(scoreVals), morningAvg:avg(morningVals), topReason };
+    }
+
+    function buildWarningNotes(timeline, scoreSummary, morningSummary, contextComparison) {
+      const notes = [];
+      if (timeline.length >= 3) {
+        const last3 = timeline.slice(-3);
+        const first3 = timeline.slice(0,3);
+        const avg = arr => arr.reduce((a,b)=>a+b.overall,0)/arr.length;
+        if (avg(last3) < avg(first3) - 1) notes.push('Der Kippi-Score fällt im Verlauf spürbar. Kein Alarm — aber ein guter Anlass, die letzten Einträge genauer zu lesen.');
+        const schere = last3.filter(p => p.wellbeing - p.clarity >= 2 || p.wellbeing - p.follow >= 2).length;
+        if (schere >= 2) notes.push('Mehrere aktuelle Einträge zeigen eine Schere: Der Moment fühlt sich besser an als Klarheit oder Folgetag. Genau hier könnte etwas kippen.');
+      }
+      if (scoreSummary.count && scoreSummary.follow < 5) notes.push('Der Folgekostenwert liegt unter 5/10. Kippi würde besonders Schlaf, Energie und Nebenwirkungen weiter beobachten.');
+      if (morningSummary.count >= 2 && morningSummary.overall < 5.5) notes.push('Die Morgenwerte sind eher niedrig. Das ist oft aussagekräftiger als die direkte Nachher-Bewertung.');
+      if (contextComparison.length >= 2) {
+        const worst = contextComparison[contextComparison.length-1];
+        if (worst.avg < 5.5 && worst.count >= 2) notes.push(`Die Situation „${escapeHtml(worst.label)}“ liegt wiederholt eher niedrig. Vielleicht ist nicht die Sorte das Problem, sondern der Anlass.`);
+      }
+      return notes;
+    }
+
+    function buildScoreSummary(after) {
+      const scored = after.filter(e => e.scores);
+      const dimDefs = [
+        ['relaxation','Entspannung'], ['mood','Stimmung'], ['clarity','Klarheit'], ['body','Körpergefühl'],
+        ['sleep','Schlaf/Folgetag'], ['energy','Energie'], ['control','Kontrollgefühl'], ['sideFree','wenig Nebenwirkung']
+      ];
+      const avg = arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : null;
+      const entryScores = scored.map(calcEntryScores).filter(x => x.overall);
+      const overall = avg(entryScores.map(x=>x.overall)) || 0;
+      const wellbeing = avg(entryScores.map(x=>x.wellbeing).filter(Boolean)) || 0;
+      const clarity = avg(entryScores.map(x=>x.clarity).filter(Boolean)) || 0;
+      const follow = avg(entryScores.map(x=>x.follow).filter(Boolean)) || 0;
+      const dimensions = dimDefs.map(([key,label]) => {
+        const values = scored.map(e => Number(e.scores?.[key])).filter(Number.isFinite);
+        return { key, label, avg: avg(values) || 0, count: values.length };
+      }).filter(d => d.count);
+      return { count: scored.length, overall, wellbeing, clarity, follow, dimensions, overallText: scored.length ? overall.toFixed(1) + '/10' : '—' };
+    }
+
+    function buildGroupComparison(after, field) {
+      const groups = {};
+      after.filter(e => e.scores && e[field]).forEach(e => {
+        const label = e[field] || 'unklar';
+        (groups[label] ||= []).push(calcEntryScores(e).overall);
+      });
+      return Object.entries(groups).map(([label, vals]) => ({
+        label, count: vals.length, avg: vals.reduce((a,b)=>a+b,0)/vals.length
+      })).filter(x => x.count >= 1).sort((a,b)=>b.avg-a.avg);
+    }
+
+    function scoreBlock(summary) {
+      if (!summary.count) return '<div class="insight"><strong>Kippi-Score:</strong> Noch keine mehrdimensionalen Bewertungen vorhanden. Speichere einen Nachher-Eintrag mit den neuen Reglern.</div>';
+      const dims = summary.dimensions.slice().sort((a,b)=>b.avg-a.avg).map(d => `
+        <div class="bar-row"><span>${escapeHtml(d.label)}</span><div class="bar-shell"><div class="bar-fill" style="width:${Math.max(8, Math.round(d.avg*10))}%"></div></div><span>${d.avg.toFixed(1)}</span></div>
+      `).join('');
+      return `<div class="insight"><strong>Kippi-Score im Detail</strong>
+        <div class="metric-grid" style="margin-top:10px; grid-template-columns: repeat(4, minmax(0, 1fr));">
+          ${metric('Gesamt', summary.overall.toFixed(1) + '/10', 'alle Dimensionen')}
+          ${metric('Wohlgefühl', summary.wellbeing.toFixed(1), 'Entspannung/Stimmung/Körper')}
+          ${metric('Klarheit', summary.clarity.toFixed(1), 'Kopf/Kontrolle')}
+          ${metric('Folgekosten', summary.follow.toFixed(1), 'Schlaf/Energie/Nebenwirkung')}
+        </div>
+        <div style="display:grid;gap:8px;margin-top:12px;">${dims}</div>
+      </div>`;
+    }
+
+
+    function buildTimeline(after) {
+      return after
+        .filter(e => e.scores)
+        .slice()
+        .sort((a,b) => new Date(a.date) - new Date(b.date))
+        .map((e, i) => {
+          const c = calcEntryScores(e);
+          return {
+            index: i + 1,
+            date: e.date,
+            label: new Date(e.date).toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit' }),
+            context: e.context || '—',
+            overall: c.overall,
+            wellbeing: c.wellbeing,
+            clarity: c.clarity,
+            follow: c.follow
+          };
+        });
+    }
+
+    function svgLine(points, key, cls='chart-line') {
+      if (!points.length) return '';
+      const w = 620, h = 200, left = 34, right = 14, top = 18, bottom = 30;
+      const innerW = w - left - right;
+      const innerH = h - top - bottom;
+      const x = i => points.length === 1 ? left + innerW/2 : left + (i/(points.length-1))*innerW;
+      const y = v => top + (10 - v) / 9 * innerH;
+      const d = points.map((p,i) => `${i?'L':'M'}${x(i).toFixed(1)},${y(p[key]).toFixed(1)}`).join(' ');
+      return `<path class="${cls}" d="${d}"></path>`;
+    }
+
+    function svgDots(points, key) {
+      if (!points.length) return '';
+      const w = 620, h = 200, left = 34, right = 14, top = 18, bottom = 30;
+      const innerW = w - left - right;
+      const innerH = h - top - bottom;
+      const x = i => points.length === 1 ? left + innerW/2 : left + (i/(points.length-1))*innerW;
+      const y = v => top + (10 - v) / 9 * innerH;
+      return points.map((p,i) => `<circle class="chart-dot" cx="${x(i).toFixed(1)}" cy="${y(p[key]).toFixed(1)}" r="4"><title>${escapeHtml(p.label)} · ${escapeHtml(p.context)} · ${p[key].toFixed(1)}/10</title></circle>`).join('');
+    }
+
+    function chartAxes(points) {
+      const w = 620, h = 200, left = 34, right = 14, top = 18, bottom = 30;
+      const innerW = w - left - right;
+      const yFor = v => top + (10 - v) / 9 * (h - top - bottom);
+      const xFor = i => points.length === 1 ? left + innerW/2 : left + (i/(points.length-1))*innerW;
+      const labels = [10, 7, 4, 1].map(v => `<line class="chart-axis" x1="${left}" y1="${yFor(v).toFixed(1)}" x2="${w-right}" y2="${yFor(v).toFixed(1)}"></line><text class="chart-label" x="4" y="${(yFor(v)+4).toFixed(1)}">${v}</text>`).join('');
+      const dateLabels = points.map((p,i) => {
+        if (points.length > 7 && i % Math.ceil(points.length/6) !== 0 && i !== points.length-1) return '';
+        return `<text class="chart-label" x="${xFor(i).toFixed(1)}" y="190" text-anchor="middle">${escapeHtml(p.label)}</text>`;
+      }).join('');
+      return labels + dateLabels;
+    }
+
+    function trendSentence(points, key, label) {
+      if (points.length < 2) return `Für eine echte Dynamik braucht Kippi mindestens zwei Score-Einträge.`;
+      const first = points[0][key], last = points[points.length - 1][key];
+      const diff = last - first;
+      if (Math.abs(diff) < 0.4) return `${label} wirkt bisher relativ stabil: von ${first.toFixed(1)} auf ${last.toFixed(1)}.`;
+      return `${label} ${diff > 0 ? 'steigt' : 'sinkt'} bisher: von ${first.toFixed(1)} auf ${last.toFixed(1)} (${diff > 0 ? '+' : ''}${diff.toFixed(1)}).`;
+    }
+
+    function timelineBlock(title, points, key) {
+      if (!points.length) return '<div class="insight"><strong>Grafik:</strong> Noch keine Score-Daten für einen Verlauf.</div>';
+      return `<div class="chart-card"><div class="chart-head"><strong>${escapeHtml(title)}</strong><span>${escapeHtml(trendSentence(points, key, 'Der Kippi-Score'))}</span></div>
+        <svg class="line-chart" viewBox="0 0 620 200" preserveAspectRatio="none" role="img" aria-label="Kippi-Score Verlauf">
+          ${chartAxes(points)}${svgLine(points, key)}${svgDots(points, key)}
+        </svg>
+        <p class="mini-note">Die Kurve zeigt die Reihenfolge deiner Nachher-Einträge. Tippe/halte einen Punkt, um Datum, Situation und Wert zu sehen.</p>
+      </div>`;
+    }
+
+    function multiTimelineBlock(title, points) {
+      if (!points.length) return '';
+      return `<div class="chart-card"><div class="chart-head"><strong>${escapeHtml(title)}</strong><span>Wohlgefühl, Klarheit und Folgekosten im Vergleich</span></div>
+        <svg class="line-chart" viewBox="0 0 620 200" preserveAspectRatio="none" role="img" aria-label="Durchschnittswerte Verlauf">
+          ${chartAxes(points)}
+          ${svgLine(points, 'wellbeing', 'chart-line softline')}
+          ${svgLine(points, 'clarity', 'chart-line clarity')}
+          ${svgLine(points, 'follow', 'chart-line follow')}
+        </svg>
+        <div class="legend"><span class="legend-item"><span class="legend-swatch pink"></span>Wohlgefühl</span><span class="legend-item"><span class="legend-swatch dark"></span>Klarheit</span><span class="legend-item"><span class="legend-swatch brown"></span>Folgekosten</span></div>
+        <p class="mini-note">Besonders interessant ist die Schere: Wenn Wohlgefühl hochgeht, Klarheit oder Folgetag aber sinken, erkennt Kippi einen möglichen Kipppunkt.</p>
+      </div>`;
+    }
+
+    function comparisonBlock(title, rows) {
+      if (!rows.length) return '<div class="insight"><strong>Vergleich nach Situation:</strong> Noch keine vergleichbaren Score-Daten.</div>';
+      return `<div class="insight"><strong>${escapeHtml(title)}</strong><p class="mini-note">Wie beim Restaurantvergleich: Kippi stellt Situationen nach ihrem durchschnittlichen Score gegenüber. Bei wenigen Einträgen ist das noch ein Hinweis, kein Urteil.</p>
+        <table class="score-table"><thead><tr><th>Situation</th><th>Ø Kippi-Score</th><th>Einträge</th></tr></thead><tbody>
+          ${rows.map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.avg.toFixed(1)}/10</td><td>${r.count}</td></tr>`).join('')}
+        </tbody></table>
+      </div>`;
+    }
+
+
+    function strainComparisonBlock(title, rows) {
+      if (!rows.length) return '<div class="insight"><strong>Sorten-/Form-Vergleich:</strong> Noch keine Daten. Trage bei Nachher-Einträgen Sorte/Form ein — dann ersetzt Kippi nach und nach eine Excel-Tabelle.</div>';
+      return `<div class="insight"><strong>${escapeHtml(title)}</strong><p class="mini-note">Kippi nimmt den Text aus Sorte/Form/Menge als Vergleichsname. Für genaue Werte am besten immer denselben Namen verwenden.</p>
+        <table class="score-table"><thead><tr><th>Sorte/Form</th><th>Gesamt</th><th>Nachher</th><th>Morgen</th><th>n</th></tr></thead><tbody>
+          ${rows.slice(0,8).map(r => `<tr><td>${escapeHtml(r.label)}</td><td>${r.combined === null ? '—' : r.combined.toFixed(1) + '/10'}</td><td>${r.afterAvg === null ? '—' : r.afterAvg.toFixed(1)}</td><td>${r.morningAvg === null ? '—' : r.morningAvg.toFixed(1)}</td><td>${r.count}</td></tr>`).join('')}
+        </tbody></table>
+      </div>`;
+    }
+
+    function morningBlock(summary, points) {
+      if (!summary.count) return '<div class="insight"><strong>Morgen-Check-in:</strong> Noch keine Morgenwerte. Genau diese Werte machen sichtbar, ob der Konsum auch am nächsten Tag noch gut war.</div>';
+      return `<div class="quiet-box"><strong>Morgen-Check-in im Schnitt</strong>
+        <div class="metric-grid" style="margin-top:10px; grid-template-columns: repeat(4, minmax(0, 1fr));">
+          ${metric('Morgenwert', summary.overall.toFixed(1) + '/10', 'Folgetag gesamt')}
+          ${metric('Schlaf', summary.sleep.toFixed(1), 'Qualität')}
+          ${metric('Energie', summary.energy.toFixed(1), 'Start in den Tag')}
+          ${metric('Klarheit', summary.clarity.toFixed(1), 'Kopfgefühl')}
+        </div>
+        ${timelineBlock('Morgenwert im Verlauf', points, 'overall')}
+      </div>`;
+    }
+
+    function weekReviewBlock(w) {
+      if (!w || (w.before + w.after + w.noUse + w.mornings) === 0) return '';
+      const parts = [];
+      parts.push(`Diese Woche: ${w.before} Vorher-Check-ins, ${w.after} Nachher-Reflexionen, ${w.mornings} Morgen-Check-ins und ${w.noUse} konsumfreie Tage.`);
+      if (w.scoreAvg !== null) parts.push(`Ø Kippi-Score der Woche: <strong>${w.scoreAvg.toFixed(1)}/10</strong>.`);
+      if (w.morningAvg !== null) parts.push(`Ø Morgenwert der Woche: <strong>${w.morningAvg.toFixed(1)}/10</strong>.`);
+      if (w.topReason) parts.push(`Häufigster Auslöser: <strong>${escapeHtml(w.topReason[0])}</strong>.`);
+      return `<div class="insight"><strong>Wochenrückblick</strong><br>${parts.join(' ')}</div>`;
+    }
+
+    function warningBlock(notes) {
+      if (!notes || !notes.length) return '<div class="insight"><strong>Kipppunkt-Frühwarnung:</strong> Aktuell kein klares Warnmuster. Kippi beobachtet weiter — ruhig, ohne Alarmismus.</div>';
+      return `<div class="insights">${notes.map(n => `<div class="insight"><strong>Kipppunkt-Hinweis:</strong> ${n}</div>`).join('')}</div>`;
+    }
+
+    function speakAnalysis() {
+      const a = buildAnalysis();
+      setSpeech(a.spoken || 'Noch sind zu wenige Daten für eine Auswertung da.', true);
+    }
+
+    function exportEntries() {
+      const blob = new Blob([JSON.stringify(entries, null, 2)], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'kippi-tagebuch-export.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function clearAllEntries() {
+      if (!confirm('Alle lokalen Kippi-Einträge wirklich löschen?')) return;
+      entries = [];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+      render();
+      setSpeech('Alles gelöscht. Kippi ist wieder leer, aber nicht beleidigt.', true);
+    }
+
+    function metric(label, number, sub) {
+      return `<div class="metric"><div class="number">${escapeHtml(number)}</div><div class="label">${escapeHtml(label)}<br>${escapeHtml(sub)}</div></div>`;
+    }
+
+    function barBlock(title, bars) {
+      if (!bars.length) return `<div class="insight"><strong>${escapeHtml(title)}:</strong> noch keine Daten.</div>`;
+      return `<div class="insight"><strong>${escapeHtml(title)}</strong><div style="display:grid;gap:8px;margin-top:10px;">${bars.map(b => `
+        <div class="bar-row"><span>${escapeHtml(b.label)}</span><div class="bar-shell"><div class="bar-fill" style="width:${b.percent}%"></div></div><span>${b.count}×</span></div>
+      `).join('')}</div></div>`;
+    }
+
+    function toBars(obj) {
+      const arr = Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,5);
+      const max = arr[0]?.[1] || 1;
+      return arr.map(([label,count]) => ({label, count, percent: Math.max(8, Math.round(count/max*100))}));
+    }
+
+    function topEntry(obj) {
+      return Object.entries(obj).sort((a,b)=>b[1]-a[1])[0] || null;
+    }
+
+    function count(arr) {
+      return arr.reduce((acc, x) => { if (x) acc[x] = (acc[x] || 0) + 1; return acc; }, {});
+    }
+
+
+
+    let guidedFlow = [];
+    let guidedIndex = 0;
+    let guidedDraft = {};
+    let guidedMode = 'before';
+    let guidedLastText = '';
+    let guidedAside = null;
+    let guidedQuestionSpoken = true;
+
+
+    const guidedFlows = {
+      before: [
+        { key:'mood', title:'Wie geht es dir gerade?', hint:'Wähle die Stimmung, die am ehesten passt. Es muss nicht perfekt sein.', type:'select', options:['ruhig','gestresst','traurig','gelangweilt','angespannt','gut'] },
+        { key:'reason', title:'Warum möchtest du konsumieren?', hint:'Der Anlass ist oft wichtiger als die Menge.', type:'chips', options:['Genuss','Stress','Schlaf','Langeweile','Belohnung','Gewohnheit','Sozial'] },
+        { key:'expectation', title:'Was erhoffst du dir?', hint:'Ein Satz reicht. Kippi hört auf die Richtung, nicht auf perfekte Formulierungen.', type:'text', placeholder:'z. B. runterkommen, abschalten, besser schlafen ...' },
+        { key:'amount', title:'Sorte, Form oder Menge?', hint:'Optional, aber später für Vergleiche sehr nützlich.', type:'text', placeholder:'z. B. Vaporizer, Joint, Sorte, wenig/mittel/viel' },
+        { key:'note', title:'Was sollte dein späteres Ich wissen?', hint:'Eine kleine Notiz macht den Eintrag später viel wertvoller.', type:'textarea', placeholder:'z. B. Ich bin müde, aber eigentlich nicht unglücklich ...' }
+      ],
+      after: [
+        { key:'helped', title:'Hat es dir gegeben, was du gesucht hast?', hint:'Hier geht es um den Unterschied zwischen Erwartung und tatsächlicher Wirkung.', type:'select', options:['ja','teilweise','nein','weiß nicht'] },
+        { key:'mood', title:'Wie war deine Stimmung danach?', hint:'Nicht bewerten, nur beobachten.', type:'select', options:['entspannt','klar','müde','grübelnd','unruhig','zufrieden'] },
+        { key:'context', title:'Welche Situation passt am ehesten?', hint:'Damit Kippi später Situationen vergleichen kann.', type:'select', options:['Genuss','Stress','Schlaf','Langeweile','Belohnung','Gewohnheit','Sozial','unklar'] },
+        { key:'amount', title:'Sorte, Form oder Menge?', hint:'Wichtig für spätere Sorten- und Formvergleiche.', type:'text', placeholder:'z. B. Bucket List Vaporizer, wenig' },
+        { key:'scoreRelax', title:'Wie stark war die Entspannung?', hint:'1 = kaum, 10 = sehr stark.', type:'range', min:1, max:10, value:5 },
+        { key:'scoreClarity', title:'Wie klar war dein Kopf?', hint:'Dieser Wert ist besonders wichtig, weil Wohlgefühl und Klarheit auseinanderfallen können.', type:'range', min:1, max:10, value:5 },
+        { key:'scoreControl', title:'Wie gut war dein Kontrollgefühl?', hint:'Nicht moralisch gemeint: Es geht darum, ob du dich noch bei dir gefühlt hast.', type:'range', min:1, max:10, value:5 },
+        { key:'scoreSideFree', title:'Wie wenig Nebenwirkungen gab es?', hint:'10 bedeutet: kaum Nebenwirkungen.', type:'range', min:1, max:10, value:5 },
+        { key:'side', title:'Gab es Nebenwirkungen oder einen Kipppunkt?', hint:'Auch „nichts“ ist eine gute Antwort.', type:'text', placeholder:'z. B. Heißhunger, Grübeln, Herzklopfen, nichts' },
+        { key:'rating', title:'Wie bewertest du den Eintrag insgesamt?', hint:'1 = nicht gut, 5 = sehr gut.', type:'select', options:['5','4','3','2','1'] },
+        { key:'note', title:'Was würdest du deinem zukünftigen Ich sagen?', hint:'Hier entsteht oft die eigentliche Einsicht.', type:'textarea', placeholder:'z. B. Es war angenehm, aber später als geplant ...' }
+      ],
+      morning: [
+        { key:'strain', title:'Worauf bezieht sich der Morgen-Check-in?', hint:'Optional: Sorte/Form von gestern oder die Situation.', type:'text', placeholder:'z. B. Vaporizer abends, Stress-Abend, Sorte ...' },
+        { key:'mood', title:'Wie fühlst du dich heute Morgen?', hint:'Der Morgen ist oft ehrlicher als der Moment.', type:'select', options:['klar','müde','ruhig','gereizt','vernebelt','ausgeglichen','schwer einzuordnen'] },
+        { key:'morningSleep', title:'Wie war die Schlafqualität?', hint:'1 = schlecht, 10 = sehr gut.', type:'range', min:1, max:10, value:5 },
+        { key:'morningEnergy', title:'Wie viel Energie hast du?', hint:'Der Folgetag zeigt oft, ob der Abend wirklich gutgetan hat.', type:'range', min:1, max:10, value:5 },
+        { key:'morningClarity', title:'Wie klar ist dein Kopf?', hint:'Klarheit ist ein feiner, aber sehr wertvoller Marker.', type:'range', min:1, max:10, value:5 },
+        { key:'morningNoRegret', title:'Wie wenig Bedauern ist da?', hint:'10 bedeutet: kein Bedauern, alles stimmig.', type:'range', min:1, max:10, value:5 },
+        { key:'note', title:'Was bleibt vom gestrigen Abend übrig?', hint:'Ein ruhiger Satz reicht.', type:'textarea', placeholder:'z. B. Gut geschlafen, aber etwas träger Start ...' }
+      ]
+    };
+
+    function startGuidedFlow() {
+      guidedMode = val('guidedMode') || 'before';
+      guidedFlow = guidedFlows[guidedMode];
+      guidedIndex = 0;
+      guidedAside = null;
+      guidedDraft = { _asides: [], _asideCount: 0 };
+      showScreen('guided');
+      const intro = guidedMode === 'before'
+        ? 'Wir beginnen vor dem Konsum. Du musst dich nicht anstrengen: Kippi führt dich. Du tippst nur an, was passt. Und ich lese dir jede Frage vor.'
+        : guidedMode === 'after'
+          ? 'Wir schauen nach dem Konsum zurück. Nicht streng, nicht weichgespült — eher wie ein ruhiger Begleiter, der fragt: Was war wirklich los?'
+          : 'Wir schauen auf den Morgen danach. Der Morgen ist kein Richter, aber ein ziemlich guter Zeuge.';
+      renderGuidedStep(intro, true);
+    }
+
+    function renderGuidedStep(openingText, speakQuestion = true) {
+      guidedAside = null;
+      const step = guidedFlow[guidedIndex];
+      if (!step) return finishGuidedFlow();
+      document.getElementById('guidedStepLabel').textContent = `Schritt ${guidedIndex + 1} von ${guidedFlow.length}`;
+      document.getElementById('guidedTitle').textContent = step.title;
+      document.getElementById('guidedHint').textContent = step.hint || '';
+      document.getElementById('guidedProgressFill').style.width = Math.round((guidedIndex / guidedFlow.length) * 100) + '%';
+      const text = openingText || openingForStep(step);
+      const spokenQuestion = makeSpokenQuestion(step);
+      guidedLastText = `${text} ${spokenQuestion}`;
+      document.getElementById('guidedKippiText').innerHTML = `${escapeHtml(text)}<br><br><strong>${escapeHtml(spokenQuestion)}</strong>`;
+      const host = document.getElementById('guidedInputHost');
+      const saved = guidedDraft[step.key] ?? step.value ?? '';
+      if (step.type === 'select') {
+        host.innerHTML = `<select id="guidedCurrentInput" aria-label="${escapeHtml(step.title)}">${step.options.map(o => `<option ${o==saved?'selected':''}>${escapeHtml(o)}</option>`).join('')}</select>`;
+      } else if (step.type === 'chips') {
+        host.innerHTML = `<div class="guided-options">${step.options.map(o => `<button type="button" class="guided-option ${o==saved?'selected':''}" onclick="guidedPickOption(this, '${escapeHtml(o)}')">${escapeHtml(o)}</button>`).join('')}</div><input type="hidden" id="guidedCurrentInput" value="${escapeHtml(saved)}">`;
+      } else if (step.type === 'range') {
+        const v = saved || step.value || 5;
+        host.innerHTML = `<div class="score-row"><span>Wert</span><input id="guidedCurrentInput" type="range" min="${step.min||1}" max="${step.max||10}" value="${v}" oninput="document.getElementById('guidedRangeOut').textContent=this.value"><output id="guidedRangeOut">${v}</output></div>`;
+      } else if (step.type === 'textarea') {
+        host.innerHTML = `<textarea id="guidedCurrentInput" placeholder="${escapeHtml(step.placeholder||'')}">${escapeHtml(saved)}</textarea>`;
+      } else {
+        host.innerHTML = `<input id="guidedCurrentInput" placeholder="${escapeHtml(step.placeholder||'')}" value="${escapeHtml(saved)}">`;
+      }
+      const nextBtn = document.getElementById('guidedNextButton');
+      nextBtn.textContent = 'Antwort übernehmen';
+      nextBtn.onclick = guidedNext;
+      if (speakQuestion) setSpeech(guidedLastText, true);
+    }
+
+    function makeSpokenQuestion(step) {
+      const lead = {
+        mood: 'Ich frage zuerst nach deiner Ausgangslage:',
+        reason: 'Jetzt kommt die Schlüsselfrage:',
+        expectation: 'Formuliere nun die Erwartung, ganz kurz:',
+        amount: 'Wenn du magst, nenne jetzt Sorte, Form oder Menge:',
+        helped: 'Jetzt der Abgleich mit der Wirklichkeit:',
+        context: 'Damit Kippi später vergleichen kann:',
+        side: 'Jetzt noch die ehrliche Nebenwirkungsfrage:',
+        rating: 'Zum Schluss eine Gesamtbewertung:',
+        strain: 'Worauf bezieht sich dieser Morgen?'
+      }[step.key] || 'Die nächste Frage lautet:';
+      return `${lead} ${step.title}`;
+    }
+
+    function guidedPickOption(btn, value) {
+      document.querySelectorAll('.guided-option').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      document.getElementById('guidedCurrentInput').value = value;
+    }
+
+    function guidedNext() {
+      if (guidedAside) return guidedSkipAside();
+      const step = guidedFlow[guidedIndex];
+      const input = document.getElementById('guidedCurrentInput');
+      let value = input ? input.value.trim() : '';
+      if (!value && step.type !== 'text' && step.type !== 'textarea') value = step.value || '';
+      guidedDraft[step.key] = value;
+      const response = rhetoricalResponse(step, value, guidedDraft, guidedMode);
+      const aside = buildAsideQuestion(step, value, guidedDraft, guidedMode);
+      guidedIndex += 1;
+      if (aside) {
+        renderGuidedAside(response, aside);
+        return;
+      }
+      if (guidedIndex >= guidedFlow.length) {
+        guidedLastText = response + ' Ich speichere den Eintrag jetzt.';
+        setSpeech(guidedLastText, true);
+        finishGuidedFlow();
+      } else {
+        renderGuidedStep(response, true);
+      }
+    }
+
+    function renderGuidedAside(response, aside) {
+      guidedAside = aside;
+      document.getElementById('guidedStepLabel').textContent = 'Kippis Zwischenfrage';
+      document.getElementById('guidedTitle').textContent = aside.title || 'Eine kleine Nebenfrage';
+      document.getElementById('guidedHint').textContent = aside.hint || 'Diese Antwort hilft Kippi später bei der Analyse. Du kannst sie auch überspringen.';
+      const full = `${response} ${aside.question}`;
+      guidedLastText = full;
+      document.getElementById('guidedKippiText').innerHTML = `${escapeHtml(response)}<div class="guided-aside-box"><div class="guided-aside-title">Nebenbei gefragt</div><strong>${escapeHtml(aside.question)}</strong></div>`;
+      const host = document.getElementById('guidedInputHost');
+      host.innerHTML = `<div class="guided-options">${aside.options.map(o => `<button type="button" class="guided-option" onclick="guidedAnswerAside('${escapeHtml(o)}')">${escapeHtml(o)}</button>`).join('')}</div>`;
+      const nextBtn = document.getElementById('guidedNextButton');
+      nextBtn.textContent = 'Überspringen';
+      nextBtn.onclick = guidedSkipAside;
+      setSpeech(full, true);
+    }
+
+    function guidedAnswerAside(value) {
+      if (!guidedAside) return;
+      guidedDraft._asides = guidedDraft._asides || [];
+      guidedDraft._asides.push({ key: guidedAside.key, question: guidedAside.question, answer: value, afterStep: guidedAside.afterStep || '' });
+      const follow = typeof guidedAside.follow === 'function'
+        ? guidedAside.follow(value)
+        : `Interessant. „${value}“ ist notiert. Kippi merkt sich nicht nur Daten, sondern auch kleine Zwischentöne.`;
+      guidedAside = null;
+      if (guidedIndex >= guidedFlow.length) {
+        guidedLastText = follow + ' Ich speichere den Eintrag jetzt.';
+        setSpeech(guidedLastText, true);
+        finishGuidedFlow();
+      } else {
+        renderGuidedStep(follow, true);
+      }
+    }
+
+    function guidedSkipAside() {
+      const follow = 'Alles gut, die Nebenfrage lassen wir offen. Kippi bleibt im Fluss und führt dich weiter.';
+      guidedAside = null;
+      if (guidedIndex >= guidedFlow.length) {
+        guidedLastText = follow + ' Ich speichere den Eintrag jetzt.';
+        setSpeech(guidedLastText, true);
+        finishGuidedFlow();
+      } else {
+        renderGuidedStep(follow, true);
+      }
+    }
+
+    function buildAsideQuestion(step, value, draft, mode) {
+      const v = String(value || '').toLowerCase();
+      draft._asideCount = draft._asideCount || 0;
+      if (draft._asideCount >= 3) return null;
+      const make = (key, question, options, follow, hint='Kippi fragt das nicht aus Neugier, sondern weil solche Nebenantworten später Muster erklären.') => {
+        draft._asideCount += 1;
+        return { key, question, options, follow, hint, afterStep: step.key };
+      };
+      if (mode === 'before' && step.key === 'mood') {
+        if (v.includes('stress') || v.includes('angespannt')) return make('stressNeed', 'Was wäre gerade die ehrlichste Beschreibung: willst du Druck lösen, dich belohnen oder einfach nicht mehr fühlen müssen?', ['Druck lösen','Belohnung','Nicht fühlen müssen','Nicht sicher'], a => `Das ist eine starke Unterscheidung. „${a}“ klingt wie der eigentliche Untertitel dieses Moments. Genau solche Untertitel helfen später mehr als bloße Mengenangaben.`);
+        if (v.includes('gelangweilt')) return make('boredomNeed', 'Was fehlt gerade eher: Reiz, Ruhe oder Kontakt?', ['Reiz','Ruhe','Kontakt','weiß nicht'], a => `Kippi merkt sich: Es ging vielleicht um ${a}. Langeweile ist selten leer — oft versteckt sie ein Bedürfnis in sehr schlichter Kleidung.`);
+        if (v.includes('gut') || v.includes('ruhig')) return make('goodMoodFrame', 'Soll dieser Konsum eher ein Ritual, ein Genussmoment oder ein Experiment sein?', ['Ritual','Genussmoment','Experiment','unklar'], a => `Schön. „${a}“ gibt dem Ganzen einen Rahmen. Ein Rahmen ist gut: Er macht aus Konsum eher Entscheidung als Zufall.`);
+      }
+      if (mode === 'before' && step.key === 'reason') {
+        if (v.includes('stress') || v.includes('schlaf')) return make('alternativeTried', 'Hast du vor dem Konsum schon etwas anderes versucht, auch nur klein?', ['Ja, kurz','Nein','Ich will nicht','Gute Idee'], a => `Das ist nicht als Prüfung gemeint. „${a}“ hilft Kippi später zu sehen, ob Konsum erste Wahl, letzte Wahl oder einfach die schnellste Wahl war.`);
+        if (v.includes('gewohnheit')) return make('habitFeeling', 'Fühlt sich diese Gewohnheit gerade eher gemütlich, automatisch oder ein bisschen unfrei an?', ['gemütlich','automatisch','etwas unfrei','weiß nicht'], a => `Sehr brauchbar: „${a}“. Bei Gewohnheiten ist nicht die Wiederholung allein entscheidend, sondern wie frei sie sich noch anfühlt.`);
+      }
+      if (mode === 'after' && step.key === 'helped') {
+        if (v.includes('teil') || v.includes('nein') || v.includes('weiß')) return make('benefitCost', 'Was war stärker: der Nutzen, der Preis oder die Unklarheit?', ['Nutzen','Preis','Unklarheit','ausgeglichen'], a => `Das ist analytisch wertvoll. „${a}“ zeigt, ob der Eintrag eher getragen, gekostet oder verwirrt hat.`);
+        if (v === 'ja') return make('whatWorked', 'Was hat vermutlich am meisten geholfen: Sorte/Form, Situation oder deine Ausgangslage?', ['Sorte/Form','Situation','Ausgangslage','Mischung'], a => `Gut beobachtet. Wenn „${a}“ stimmt, kann Kippi später unterscheiden, ob die Wirkung vom Produkt oder vom Kontext kam.`);
+      }
+      if (mode === 'after' && (step.key === 'scoreClarity' || step.key === 'scoreControl')) {
+        const n = Number(value);
+        if (Number.isFinite(n) && n <= 5) return make('claritySignal', 'War das eher ein akzeptabler Nebel oder schon ein kleiner Kipppunkt?', ['akzeptabler Nebel','kleiner Kipppunkt','schwer zu sagen'], a => `Kippi notiert „${a}“. Das ist eine feine Linie — und genau deshalb lohnt es sich, sie nicht erst im Nachhinein zu erraten.`);
+      }
+      if (mode === 'morning' && (step.key === 'morningEnergy' || step.key === 'morningClarity')) {
+        const n = Number(value);
+        if (Number.isFinite(n) && n <= 5) return make('morningMarker', 'Soll Kippi den gestrigen Abend innerlich markieren: beobachten, vermeiden oder noch nicht bewerten?', ['beobachten','vermeiden','noch nicht bewerten'], a => `Alles klar: „${a}“. Kippi macht daraus keinen Alarm, sondern eine kleine Markierung im Muster.`);
+      }
+      if (step.key === 'note' && value) {
+        return make('noteTone', 'Welche Farbe hat diese Notiz eher: Einsicht, Warnsignal oder einfach Erinnerung?', ['Einsicht','Warnsignal','Erinnerung','weiß nicht'], a => `Schön formuliert. Kippi speichert den Ton als „${a}“. Denn manchmal zählt nicht nur, was passiert ist, sondern wie es sich im Rückblick anfühlt.`);
+      }
+      return null;
+    }
+
+    function openingForStep(step) {
+      const openings = {
+        mood: 'Wir beginnen nicht mit Menge, sondern mit Lage. Denn der gleiche Konsum kann je nach Stimmung ganz verschieden bedeuten.',
+        reason: 'Jetzt kommt der eigentliche Angelpunkt. Kippi fragt nach dem Warum, weil dort oft schon die halbe Antwort liegt.',
+        expectation: 'Eine Erwartung ist wie ein kleines Versprechen an dich selbst. Wir schreiben es auf, damit es später überprüfbar wird.',
+        amount: 'Jetzt wird es konkreter. Nicht zur Kontrolle, sondern damit Muster später nicht im Nebel bleiben.',
+        helped: 'Jetzt vergleichen wir Wunsch und Wirklichkeit. Dieser Moment ist einer der wichtigsten in der ganzen App.',
+        context: 'Wir ordnen den Abend ein. Kontext ist oft der unsichtbare Wirkstoff.',
+        note: 'Zum Schluss bekommt dein zukünftiges Ich noch einen Satz. Manchmal ist genau der später Gold wert.'
+      };
+      return openings[step.key] || 'Kippi bleibt bei dir. Wir nehmen nur diesen einen Schritt.';
+    }
+
+    function rhetoricalResponse(step, value, draft, mode) {
+      const v = String(value || '').toLowerCase();
+      if (step.key === 'mood') {
+        if (v.includes('stress') || v.includes('angespannt')) return 'Das ist ein ehrlicher Anfang. Spannung macht Konsum oft verführerisch, weil sie schnelle Entlastung verspricht. Kippi hält kurz die Lampe drauf: Suchst du gerade Genuss — oder eine Notbremse?';
+        if (v.includes('gelangweilt')) return 'Langeweile ist leise, aber mächtig. Sie tut so, als bräuchte man nur einen Reiz. Gut, dass du sie benennst — damit wird aus Autopilot schon Beobachtung.';
+        if (v.includes('traurig')) return 'Traurigkeit verdient Vorsicht und Freundlichkeit. Kippi bewertet sie nicht weg. Wir schauen nur, ob Konsum gerade trägt — oder ob er etwas zudeckt, das eigentlich gesehen werden will.';
+        if (v.includes('gut') || v.includes('ruhig') || v.includes('klar')) return 'Das klingt nach einer stabileren Ausgangslage. Gerade dann ist Reflexion wertvoll: Nicht aus Angst, sondern damit Genuss bewusst bleibt und nicht heimlich zur Gewohnheit wird.';
+        return 'Gut, du hast die Stimmung nicht übersprungen. Das ist der erste Anker: Nicht was du konsumierst, sondern aus welcher inneren Lage heraus.';
+      }
+      if (step.key === 'reason' || step.key === 'context') {
+        if (v.includes('stress')) return 'Stress ist ein ernster Auslöser, weil er Konsum leicht zur Soforthilfe macht. Kippi fragt nicht streng, sondern klug: Hilft es wirklich — oder verschiebt es nur den Druck?';
+        if (v.includes('langeweile')) return 'Langeweile ist ein klassischer Kipppunkt. Nicht dramatisch, aber verräterisch: Wenn nichts fehlt außer Reiz, kann Konsum schnell zur Standardtaste werden.';
+        if (v.includes('gewohnheit')) return 'Gewohnheit ist nicht automatisch schlecht, aber sie ist selten ganz unschuldig. Dass du sie aussprichst, ist stark: Eine benannte Gewohnheit ist schon weniger unsichtbar.';
+        if (v.includes('genuss')) return 'Genuss darf da sein. Kippi ist kein Spielverderber. Gerade bewusster Genuss hat Würde — solange man ehrlich bleibt, ob er noch frei gewählt ist.';
+        if (v.includes('schlaf')) return 'Schlaf als Motiv ist verständlich. Gleichzeitig ist der Morgen danach hier besonders wichtig: Einschlafen und erholt aufwachen sind nicht dasselbe.';
+        if (v.includes('sozial')) return 'Sozialer Konsum hat oft eine andere Qualität als einsamer Konsum. Kippi merkt sich das, weil Umgebung manchmal mehr erklärt als Sorte oder Menge.';
+        return 'Der Anlass ist notiert. Genau daraus entstehen später die brauchbaren Muster: nicht abstrakt, sondern aus deinen echten Situationen.';
+      }
+      if (step.key === 'expectation') {
+        if (!value) return 'Auch keine klare Erwartung ist eine Information. Manchmal beginnt Autopilot genau dort, wo man nicht mehr weiß, was man eigentlich sucht.';
+        return `Du erwartest also: „${value}“. Das ist wertvoll, weil wir später prüfen können, ob der Konsum dieses Versprechen gehalten hat — oder nur gut darin war, es zu machen.`;
+      }
+      if (step.key === 'amount' || step.key === 'strain') {
+        if (!value) return 'Du lässt das offen — völlig okay. Für die Analyse wäre es später nützlich, aber Kippi zwingt nichts. Reflexion bleibt freiwillig.';
+        return `„${value}“ ist notiert. Das ist mehr als ein Detail: Solche Angaben machen später sichtbar, ob eine Form wirklich passt oder nur vertraut wirkt.`;
+      }
+      if (step.key === 'helped') {
+        if (v.includes('teil')) return '„Teilweise“ ist oft die ehrlichste Antwort. Nicht schlecht, nicht gut — gemischt. Genau in diesem Zwischenraum beginnt echte Analyse.';
+        if (v === 'ja') return 'Gut. Dann halten wir nicht nur fest, dass es angenehm war, sondern auch unter welchen Bedingungen es funktioniert hat.';
+        if (v === 'nein') return 'Das ist wichtig. Ein Konsum, der sein Versprechen nicht hält, sollte nicht einfach im Nebel verschwinden. Kippi merkt sich das ruhig und deutlich.';
+        return 'Unsicherheit ist kein Fehler. Manchmal weiß man erst am nächsten Morgen, was wirklich passiert ist.';
+      }
+      if (step.key.startsWith('score') || step.key.startsWith('morning')) {
+        const n = Number(value);
+        const name = step.title.replace('?', '');
+        if (n >= 8) return `${name}: ${n} von 10. Das klingt stark. Kippi fragt nur leise mit: War es nur intensiv — oder auch stimmig?`;
+        if (n <= 4) return `${name}: ${n} von 10. Das ist kein Urteil, aber ein Signal. Genau solche Werte helfen, den Kipppunkt nicht erst zu merken, wenn er schon da ist.`;
+        return `${name}: ${n} von 10. Ein mittlerer Wert ist interessant: nicht eindeutig schlecht, nicht eindeutig gut. Kippi merkt sich die Zwischentöne.`;
+      }
+      if (step.key === 'side') {
+        if (!value || v === 'nichts' || v === 'keine' || v === 'nein') return 'Keine auffälligen Nebenwirkungen — gut notiert. Auch „nichts“ ist ein Datenpunkt, nicht bloß eine Leerstelle.';
+        return `„${value}“ sollte man ernst nehmen, ohne Panik daraus zu machen. Kippi speichert es als Hinweis darauf, wo aus Wirkung Nebenwirkung wird.`;
+      }
+      if (step.key === 'rating') {
+        const n = Number(value);
+        if (n >= 4) return 'Eine hohe Gesamtbewertung. Schön — aber Kippi schaut später trotzdem auf Klarheit, Kontrolle und Morgenwerte, damit gutes Gefühl nicht alles überstrahlt.';
+        if (n <= 2) return 'Eine niedrige Bewertung ist kein Scheitern, sondern ein besonders wertvoller Eintrag. Genau solche Abende erklären oft mehr als die angenehmen.';
+        return 'Eine mittlere Bewertung. Das ist oft der analytisch spannendste Bereich: Es gab etwas Gutes, aber offenbar nicht ohne Reibung.';
+      }
+      if (step.key === 'note') {
+        if (!value) return 'Du musst nichts erzwingen. Manchmal ist ein knapper Eintrag ehrlicher als ein langer Text, den man nur schreibt, um fertig zu werden.';
+        return `Das ist eine gute Spur: „${value}“. Kippi bewahrt sie nicht als Beichte auf, sondern als Orientierung für dein späteres Ich.`;
+      }
+      return 'Danke. Kippi nimmt das auf und führt dich weiter.';
+    }
+
+    function finishGuidedFlow() {
+      let entry;
+      if (guidedMode === 'before') {
+        entry = {
+          type: 'Vor dem Konsum',
+          mood: guidedDraft.mood || '',
+          reason: guidedDraft.reason || 'nicht ausgewählt',
+          expectation: guidedDraft.expectation || '',
+          amount: guidedDraft.amount || '',
+          note: guidedDraft.note || '',
+          asides: guidedDraft._asides || []
+        };
+      } else if (guidedMode === 'after') {
+        const s = {
+          relaxation: Number(guidedDraft.scoreRelax || 5),
+          mood: Number(guidedDraft.scoreRelax || 5),
+          clarity: Number(guidedDraft.scoreClarity || 5),
+          body: Number(guidedDraft.scoreRelax || 5),
+          sleep: Number(guidedDraft.scoreSideFree || 5),
+          energy: Number(guidedDraft.scoreClarity || 5),
+          control: Number(guidedDraft.scoreControl || 5),
+          sideFree: Number(guidedDraft.scoreSideFree || 5)
+        };
+        entry = {
+          type: 'Nach dem Konsum',
+          helped: guidedDraft.helped || 'weiß nicht',
+          mood: guidedDraft.mood || '',
+          context: guidedDraft.context || 'unklar',
+          amount: guidedDraft.amount || '',
+          side: guidedDraft.side || '',
+          rating: guidedDraft.rating || '3',
+          scores: s,
+          note: guidedDraft.note || '',
+          asides: guidedDraft._asides || []
+        };
+      } else {
+        entry = {
+          type: 'Morgen-Check-in',
+          strain: guidedDraft.strain || '',
+          mood: guidedDraft.mood || '',
+          morningScores: {
+            sleep: Number(guidedDraft.morningSleep || 5),
+            energy: Number(guidedDraft.morningEnergy || 5),
+            clarity: Number(guidedDraft.morningClarity || 5),
+            mood: Number(guidedDraft.morningClarity || 5),
+            body: Number(guidedDraft.morningEnergy || 5),
+            noRegret: Number(guidedDraft.morningNoRegret || 5)
+          },
+          note: guidedDraft.note || '',
+          asides: guidedDraft._asides || []
+        };
+      }
+      save(entry);
+      document.getElementById('guidedProgressFill').style.width = '100%';
+    }
+
+    function guidedRepeat() {
+      const text = guidedLastText || document.getElementById('guidedKippiText')?.textContent || document.getElementById('kippiSpeech').textContent;
+      say(text);
+    }
+
+    function guidedCancel() {
+      guidedDraft = {};
+      guidedFlow = [];
+      guidedIndex = 0;
+      showScreen('home');
+      setSpeech('Alles gut. Wir brechen ab, ohne Spuren zu erzwingen. Kippi bleibt ruhig.', true);
+    }
+
+
+    const AI_SETTINGS_KEY = 'kippi_ai_settings_v1';
+    let aiMessages = [];
+    let aiLastAnswer = '';
+    let aiPendingDraft = null;
+
+    function initAiCompanion() {
+      const saved = JSON.parse(localStorage.getItem(AI_SETTINGS_KEY) || '{}');
+      const endpoint = document.getElementById('aiEndpoint');
+      if (endpoint) endpoint.value = saved.endpoint || endpoint.value || '/api/kippi-chat';
+      if (!aiMessages.length) {
+        aiMessages = [{ role:'kippi', text:'Ich bin da. Schreib oder sprich einfach frei. Ich höre nicht nach Menge zuerst, sondern nach Lage: Was ist gerade der eigentliche Punkt?' }];
+      }
+      renderAiChat();
+      setSpeech('Ich bin da. Erzähl frei, was gerade los ist. Ich versuche, daraus eine ehrliche Spur zu machen — nicht nur einen Datensatz.', true);
+    }
+
+    function saveAiSettings() {
+      localStorage.setItem(AI_SETTINGS_KEY, JSON.stringify({ endpoint: val('aiEndpoint') }));
+    }
+
+    function renderAiChat() {
+      const log = document.getElementById('aiChatLog');
+      if (!log) return;
+      log.innerHTML = aiMessages.map(m => `<div class="ai-msg ${m.role === 'user' ? 'user' : 'kippi'}"><span class="who">${m.role === 'user' ? 'Du' : 'Kippi'}</span>${escapeHtml(m.text)}</div>`).join('');
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function clearAiChat() {
+      aiMessages = [];
+      aiPendingDraft = null;
+      document.getElementById('aiDraftBox')?.classList.remove('active');
+      document.getElementById('aiSaveButton').style.display = 'none';
+      initAiCompanion();
+    }
+
+    async function sendAiMessage() {
+      const input = document.getElementById('aiUserText');
+      const text = (input?.value || '').trim();
+      if (!text) {
+        setSpeech('Schreib mir einen Satz — auch ein unordentlicher reicht. Kippi sortiert mit dir, nicht gegen dich.', true);
+        return;
+      }
+      aiMessages.push({ role:'user', text });
+      input.value = '';
+      renderAiChat();
+      setSpeech('Ich schaue kurz hin.', true);
+
+      const endpoint = (document.getElementById('aiEndpoint')?.value || '').trim();
+      let result;
+      if (endpoint) {
+        try { result = await callKippiEndpoint(endpoint, text); }
+        catch (err) { result = localKippiBrain(text, true); result.reply += ' Der verbundene AI-Endpoint hat gerade nicht geantwortet, deshalb nutze ich den lokalen Demo-Modus.'; }
+      } else {
+        result = localKippiBrain(text, false);
+      }
+      applyAiResult(result);
+    }
+
+    async function callKippiEndpoint(endpoint, text) {
+      saveAiSettings();
+      const analysis = buildAnalysis();
+      const payload = {
+        app: 'Kippi',
+        mode: document.getElementById('aiMode')?.value || 'auto',
+        userText: text,
+        recentEntries: entries.slice(0, 12),
+        patternSummary: {
+          entries: entries.length,
+          avgRating: analysis.avgRatingText,
+          helpedRate: analysis.helpedRateText,
+          kippiScore: analysis.scoreSummary?.overallText,
+          balance: analysis.balanceText,
+          notes: analysis.kippiNotes?.map(x => x.replace(/<[^>]*>/g, '')) || []
+        },
+        instruction: kippiSystemPrompt()
+      };
+      const res = await fetch(endpoint, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(payload) });
+      if (!res.ok) throw new Error('Endpoint Fehler ' + res.status);
+      return await res.json();
+    }
+
+    function kippiSystemPrompt() {
+      return `Du bist Kippi, ein freundlicher Cannabis-Reflexionsbegleiter. Du urteilst nicht und verherrlichst nicht. Antworte warm, kurz, konkret und auf Deutsch. Stelle maximal eine gute Nachfrage. Wenn möglich gib zusätzlich JSON mit draftEntry zurück: type, mood, reason/context, amount/strain, note, scores/morningScores. Keine Diagnose, keine Therapie, bei Krisen professionelle Hilfe empfehlen.`;
+    }
+
+    function applyAiResult(result) {
+      const reply = result.reply || result.message || 'Ich habe dich gehört. Lass uns daraus eine kleine, ehrliche Spur machen.';
+      aiLastAnswer = reply;
+      aiMessages.push({ role:'kippi', text: reply });
+      aiPendingDraft = result.draftEntry || null;
+      renderAiChat();
+      renderAiDraft();
+      setSpeech(reply, true);
+    }
+
+    function renderAiDraft() {
+      const box = document.getElementById('aiDraftBox');
+      const btn = document.getElementById('aiSaveButton');
+      if (!box || !btn) return;
+      if (!aiPendingDraft) { box.classList.remove('active'); btn.style.display = 'none'; return; }
+      box.classList.add('active');
+      btn.style.display = 'block';
+      box.innerHTML = `<strong>Kippi schlägt diesen Eintrag vor:</strong><br>${draftToHtml(aiPendingDraft)}<p class="mini-note">Du kannst ihn speichern oder einfach weitersprechen. In einer späteren Version wäre hier ein Bearbeiten-Button sinnvoll.</p>`;
+    }
+
+    function draftToHtml(d) {
+      if (d.type === 'Vor dem Konsum') return `Typ: Vor dem Konsum<br>Stimmung: ${escapeHtml(d.mood||'—')}<br>Grund: ${escapeHtml(d.reason||'—')}<br>Erwartung/Notiz: ${escapeHtml(d.expectation||d.note||'—')}`;
+      if (d.type === 'Nach dem Konsum') return `Typ: Nach dem Konsum<br>Situation: ${escapeHtml(d.context||'—')}<br>Stimmung: ${escapeHtml(d.mood||'—')}<br>Geholfen: ${escapeHtml(d.helped||'weiß nicht')}<br>Notiz: ${escapeHtml(d.note||'—')}`;
+      if (d.type === 'Morgen-Check-in') return `Typ: Morgen-Check-in<br>Morgengefühl: ${escapeHtml(d.mood||'—')}<br>Bezug: ${escapeHtml(d.strain||'—')}<br>Notiz: ${escapeHtml(d.note||'—')}`;
+      return `Typ: Gesprächsnotiz<br>${escapeHtml(d.note || '')}`;
+    }
+
+    function saveAiDraft() {
+      if (!aiPendingDraft) return;
+      save(cleanDraftEntry(aiPendingDraft));
+      aiMessages.push({ role:'kippi', text:'Gespeichert. Aus dem Gespräch ist jetzt ein Eintrag geworden — genau das ist der Unterschied zwischen Reden und Erkennen.' });
+      aiPendingDraft = null;
+      renderAiChat();
+      renderAiDraft();
+    }
+
+    function cleanDraftEntry(d) {
+      const nowNote = d.note || d.expectation || 'Aus dem Kippi-Gespräch gespeichert.';
+      if (d.type === 'Vor dem Konsum') return { type:'Vor dem Konsum', mood:d.mood||'unklar', reason:d.reason||'nicht ausgewählt', expectation:d.expectation||'', amount:d.amount||'', note:nowNote, asides:[{question:'AI-Gespräch', answer:'frei formuliert'}] };
+      if (d.type === 'Nach dem Konsum') return { type:'Nach dem Konsum', helped:d.helped||'weiß nicht', mood:d.mood||'unklar', context:d.context||'unklar', amount:d.amount||'', side:d.side||'', rating:String(d.rating||3), scores:d.scores||guessScores(nowNote), note:nowNote, asides:[{question:'AI-Gespräch', answer:'frei formuliert'}] };
+      if (d.type === 'Morgen-Check-in') return { type:'Morgen-Check-in', strain:d.strain||'', mood:d.mood||'schwer einzuordnen', morningScores:d.morningScores||guessMorningScores(nowNote), note:nowNote, asides:[{question:'AI-Gespräch', answer:'frei formuliert'}] };
+      return { type:'Kippi-Gespräch', date:new Date().toISOString(), id:crypto.randomUUID(), note:nowNote };
+    }
+
+    function localKippiBrain(text, endpointFailed=false) {
+      const mode = document.getElementById('aiMode')?.value || 'auto';
+      const t = text.toLowerCase();
+      const detected = mode !== 'auto' ? mode : detectKippiMode(t);
+      const mood = detectMood(t);
+      const reason = detectReason(t);
+      const amount = detectAmount(text);
+      const risk = detectRisk(t);
+      let reply = buildLocalReply(text, detected, mood, reason, risk, endpointFailed);
+      let draftEntry = null;
+      if (detected === 'before') draftEntry = { type:'Vor dem Konsum', mood, reason, amount, expectation: extractExpectation(text), note:text };
+      if (detected === 'after') draftEntry = { type:'Nach dem Konsum', helped: detectHelped(t), mood: detectAfterMood(t), context: reason || 'unklar', amount, side: detectSide(t), rating: guessRating(t), scores: guessScores(t), note:text };
+      if (detected === 'morning') draftEntry = { type:'Morgen-Check-in', strain: amount, mood: detectMorningMood(t), morningScores: guessMorningScores(t), note:text };
+      if (detected === 'free') draftEntry = null;
+      return { reply, draftEntry };
+    }
+
+    function detectKippiMode(t) {
+      if (/(heute morgen|aufgewacht|morgens|folgetag|schlaf|matschig|vernebelt)/.test(t)) return 'morning';
+      if (/(gestern|danach|nach dem konsum|gewirkt|nebenwirkung|geholfen|high|stoned|herzklopfen|grübeln)/.test(t)) return 'after';
+      if (/(will|möchte|gleich|vorher|überlege|lust|druck|abschalten)/.test(t)) return 'before';
+      return 'free';
+    }
+    function detectMood(t) { if (/stress|angespannt|druck|unruhig/.test(t)) return 'angespannt'; if (/traurig|down|leer/.test(t)) return 'traurig'; if (/langeweile|gelangweilt/.test(t)) return 'gelangweilt'; if (/gut|ruhig|stabil/.test(t)) return 'ruhig'; return 'unklar'; }
+    function detectAfterMood(t) { if (/klar|fokussiert/.test(t)) return 'klar'; if (/müde|schläfrig/.test(t)) return 'müde'; if (/grübel|paranoid|gedanken/.test(t)) return 'grübelnd'; if (/unruhig|herz/.test(t)) return 'unruhig'; if (/entspannt|locker/.test(t)) return 'entspannt'; return detectMood(t); }
+    function detectMorningMood(t) { if (/vernebelt|matschig|benommen/.test(t)) return 'vernebelt'; if (/müde|schwer/.test(t)) return 'müde'; if (/klar|frisch/.test(t)) return 'klar'; if (/gereizt/.test(t)) return 'gereizt'; return 'schwer einzuordnen'; }
+    function detectReason(t) { if (/stress|druck|arbeit|streit/.test(t)) return 'Stress'; if (/schlaf|einschlafen/.test(t)) return 'Schlaf'; if (/langeweile|gelangweilt/.test(t)) return 'Langeweile'; if (/belohn/.test(t)) return 'Belohnung'; if (/gewohnheit|routine|automatisch/.test(t)) return 'Gewohnheit'; if (/freund|party|sozial|gruppe/.test(t)) return 'Sozial'; if (/genuss|geschmack|musik|film/.test(t)) return 'Genuss'; return 'unklar'; }
+    function detectAmount(text) { const m = text.match(/(?:sorte|strain|vapo|vaporizer|joint|pur|bucket|jelato|cookies|bomba)[^,.!?;]*/i); return m ? m[0].trim().slice(0,60) : ''; }
+    function extractExpectation(text) { const m = text.match(/(?:damit|um|ich will|ich möchte|ich hoffe)[^.!?]{0,90}/i); return m ? m[0].trim() : ''; }
+    function detectHelped(t) { if (/nicht geholfen|war nichts|bereut|schlecht/.test(t)) return 'nein'; if (/teilweise|bisschen|etwas/.test(t)) return 'teilweise'; if (/geholfen|gut getan|besser/.test(t)) return 'ja'; return 'weiß nicht'; }
+    function detectSide(t) { const hits=[]; if (/herz|puls/.test(t)) hits.push('Herz/Puls'); if (/grübel|paranoid|angst/.test(t)) hits.push('Grübeln/Unruhe'); if (/hunger|heißhunger/.test(t)) hits.push('Heißhunger'); if (/müde|matschig|vernebelt/.test(t)) hits.push('Müdigkeit/Nebel'); return hits.join(', '); }
+    function detectRisk(t) { if (/jeden tag|täglich|muss|zwang|kontrolle verloren|nicht aufhören/.test(t)) return 'hoch'; if (/gewohnheit|automatisch|eigentlich nicht|ambivalent/.test(t)) return 'mittel'; return 'normal'; }
+    function guessRating(t) { if (/bereut|schlecht|nicht geholfen|paranoid|angst/.test(t)) return '2'; if (/teilweise|gemischt|matschig/.test(t)) return '3'; if (/gut|geholfen|entspannt|klar/.test(t)) return '4'; return '3'; }
+    function guessScores(t) { const bad=/angst|paranoid|herz|bereut|matschig|vernebelt/.test(t); const good=/entspannt|gut|geholfen|klar/.test(t); const base=bad?4:(good?7:5); return { relaxation: /entspannt|ruhig/.test(t)?8:base, mood: good?7:base, clarity:/klar/.test(t)?8:(/vernebelt|matschig|grübel/.test(t)?3:base), body:/herz|puls/.test(t)?3:base, sleep:/schlaf|gut geschlafen/.test(t)?7:base, energy:/müde|matschig/.test(t)?3:base, control:/muss|zwang|kontrolle/.test(t)?3:base, sideFree: bad?3:base }; }
+    function guessMorningScores(t) { return { sleep:/gut geschlafen/.test(t)?8:(/schlecht|müde/.test(t)?4:5), energy:/müde|matschig/.test(t)?3:6, clarity:/klar/.test(t)?8:(/vernebelt|matschig/.test(t)?3:5), mood:/gereizt|down/.test(t)?4:6, body:/schwer|körper/.test(t)?4:6, noRegret:/bereut|reue/.test(t)?3:7 }; }
+
+    function buildLocalReply(text, mode, mood, reason, risk, endpointFailed) {
+      let intro = endpointFailed ? 'Ich schalte in den lokalen Kippi-Modus. ' : '';
+      let line = '';
+      if (mode === 'before') line = `Ich höre vor allem: ${reason !== 'unklar' ? reason : mood}. Das ist ein anderer Startpunkt als bloßer Genuss. Kippi würde jetzt nicht verbieten, sondern die Entscheidung verlangsamen: Was soll nachher wirklich besser sein — und woran würdest du merken, dass es nicht nur Autopilot war?`;
+      else if (mode === 'after') line = `Das klingt nach einem Nachher-Moment, also nach Wirklichkeit statt Erwartung. Ich würde festhalten: Stimmung ${detectAfterMood(text.toLowerCase())}, Situation ${reason}. Die wichtigste Frage ist jetzt: Hat der Konsum sein Versprechen gehalten oder nur kurz verschoben?`;
+      else if (mode === 'morning') line = `Der Morgen ist oft ehrlicher als der Abend. Wenn du dich ${detectMorningMood(text.toLowerCase())} fühlst, ist das kein Urteil, sondern ein Folgekosten-Signal. Kippi würde diesen Morgenwert speichern, damit der nächste Abend nicht bei null anfängt.`;
+      else line = 'Ich nehme das als Gesprächsnotiz. Noch ist es kein sauberer Konsumeintrag, aber es enthält eine Spur. Sag mir gern: Geht es gerade um vorher, nachher oder den nächsten Morgen?';
+      if (risk === 'mittel') line += ' Kleines Warnlämpchen: Du klingst ambivalent. Genau solche Sätze sind wertvoll, weil sie den Kipppunkt früh sichtbar machen.';
+      if (risk === 'hoch') line += ' Wichtig: Wenn du das Gefühl hast, Kontrolle zu verlieren oder täglich zu müssen, wäre neben Kippi auch echte Unterstützung sinnvoll. Das ist kein Scheitern, sondern Selbstschutz.';
+      return intro + line;
+    }
+
+    function startDictation() {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) { setSpeech('Dein Browser unterstützt Spracheingabe hier leider nicht. Du kannst aber schreiben, und ich antworte trotzdem.', true); return; }
+      const rec = new SR();
+      rec.lang = 'de-DE'; rec.interimResults = false; rec.maxAlternatives = 1;
+      setSpeech('Ich höre zu.', true);
+      rec.onresult = e => { document.getElementById('aiUserText').value = e.results[0][0].transcript; setSpeech('Ich habe dich verstanden. Drück jetzt auf Kippi antworten lassen.', true); };
+      rec.onerror = () => setSpeech('Das Mikrofon hat gerade nicht geklappt. Schreib es mir einfach kurz.', true);
+      rec.start();
+    }
+
+    function speakLastAiAnswer() { if (aiLastAnswer) say(aiLastAnswer); else speakCurrent(); }
+
+
+    if ('speechSynthesis' in window) {
+      populateVoices();
+      window.speechSynthesis.onvoiceschanged = populateVoices;
+    }
+    setTimeout(() => setSpeech(phrases.welcome, false), 250);
+    resetScoreSliders();
+    resetMorningSliders();
+    render();
+  </script>
+</body>
+</html>
